@@ -1,6 +1,6 @@
-# Lesson 5: Autonomous Database with Local Data Guard
+# Lesson 5: Autonomous Database with Local Autonomous Data Guard
 
-This lesson extends the private endpoint deployment path by introducing Local Data Guard for Autonomous Database Serverless. It uses the local `terraform-oci-fk-adb` module together with reusable FoggyKitchen networking modules and keeps Local Data Guard enabled as the premium in-region resilience option.
+This lesson extends the private endpoint deployment path by introducing Local Autonomous Data Guard for Autonomous Database Serverless. It uses the local `terraform-oci-fk-adb` module together with reusable FoggyKitchen networking modules and keeps Local Autonomous Data Guard enabled as the premium in-region resilience option.
 
 ![](lesson5_adb_with_local_data_guard.png)
 
@@ -8,7 +8,7 @@ This lesson extends the private endpoint deployment path by introducing Local Da
 
 - An Autonomous Database Serverless deployment with a private endpoint
 - Reusable `terraform-oci-fk-vcn` and `terraform-oci-fk-nsg` modules composed with `terraform-oci-fk-adb`
-- Local Data Guard enabled for a lower RTO and higher protection tier than backup-based local disaster recovery
+- Local Autonomous Data Guard enabled for a lower RTO and higher protection tier than backup-based local disaster recovery
 - The premium follow-up to the baseline backup-based local DR path from lesson4
 
 This lesson builds directly on the explicit networking composition introduced in lesson3 and reused in lesson4.
@@ -21,11 +21,11 @@ This lesson uses:
 - `terraform-oci-fk-vcn` for the VCN, subnet, route table, NAT gateway, and service gateway
 - `terraform-oci-fk-nsg` for the ADB NSG and rules
 - a private ADB endpoint
-- Local Data Guard enabled with `is_local_data_guard_enabled = true`
+- Local Autonomous Data Guard enabled with `is_local_data_guard_enabled = true`
 
 The networking composition lives in [networking.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson5_adb_with_local_data_guard/networking.tf), the database configuration is in [adb_UPDATED.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson5_adb_with_local_data_guard/adb_UPDATED.tf), and OCI provider authentication is configured in [provider.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson5_adb_with_local_data_guard/provider.tf).
 
-Compared with lesson4, the important difference is the service tier: Oracle positions Local Data Guard as the lower-RTO, higher-protection option, while lesson4 stays on the lower-cost backup-based local disaster recovery baseline.
+Compared with lesson4, the important difference is the service tier: Oracle positions Local Autonomous Data Guard as the lower-RTO, higher-protection option, while lesson4 stays on the lower-cost backup-based local disaster recovery baseline.
 
 ## Deploy Using Terraform CLI
 
@@ -102,7 +102,7 @@ Current lesson settings:
 - `adb_nsg_id = module.fk_nsg.nsg_id`
 - `is_local_data_guard_enabled = true`
 
-The important behavioral point is that this lesson keeps the explicit networking composition from lesson3 and lesson4, but upgrades the database protection tier by enabling Local Data Guard.
+The important behavioral point is that this lesson keeps the explicit networking composition from lesson3 and lesson4, but upgrades the database protection tier by enabling Local Autonomous Data Guard.
 
 ## Outputs
 

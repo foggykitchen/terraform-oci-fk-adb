@@ -89,7 +89,7 @@ variable "adb_private_endpoint_label" {
 }
 
 variable "whitelisted_ips" {
-  default = [""]
+  default = []
 }
 
 variable "is_auto_scaling_enabled" {
@@ -181,7 +181,6 @@ variable "adb_compute_model" {
 variable "adb_compute_count" {
   default = 2 # Options: 0 (cpu_core_count > 0) vs integer (min 2 when adb_compute_model = ECPU)
 }
-
 
 
 

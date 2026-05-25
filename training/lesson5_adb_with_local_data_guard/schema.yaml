@@ -17,7 +17,6 @@ variableGroups:
   variables:
   - compartment_ocid
   - adb_password
-  - is_local_data_guard_enabled
 
 variables:
 
@@ -50,12 +49,5 @@ variables:
     title: "Compartment"
     description: "Choose Comparment for OCI Autonomous Database Serverless"
     type: oci:identity:compartment:id
-    required: true
-    visibile: true 
-
-  is_local_data_guard_enabled:
-    title: "Enable local ADG?"
-    description: "Decide if you want to enable local Autonomous DataGuard (ADG)"
-    type: boolean
     required: true
     visibile: true 

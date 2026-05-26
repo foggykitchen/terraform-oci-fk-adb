@@ -82,7 +82,7 @@ Each lesson folder is runnable on its own and focuses on a narrower ADB scenario
 
 ```hcl
 module "adb" {
-  source = "git::https://github.com/mlinxfeld/terraform-oci-fk-adb.git"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-adb.git"
 
   compartment_ocid                = var.compartment_ocid
   adb_password                    = var.adb_password

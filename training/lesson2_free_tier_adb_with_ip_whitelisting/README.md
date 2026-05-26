@@ -30,7 +30,7 @@ The lesson configuration lives in [adb_UPDATED.tf](/Users/mlinxfeld/codes/github
 ### Clone The Repository
 
 ```bash
-git clone https://github.com/mlinxfeld/terraform-oci-fk-adb.git
+git clone https://github.com/foggykitchen/terraform-oci-fk-adb.git
 cd terraform-oci-fk-adb/training/lesson2_free_tier_adb_with_ip_whitelisting
 ```
 

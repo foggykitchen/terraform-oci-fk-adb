@@ -30,7 +30,7 @@ The networking composition lives in [networking.tf](/Users/mlinxfeld/codes/githu
 ### Clone The Repository
 
 ```bash
-git clone https://github.com/mlinxfeld/terraform-oci-fk-adb.git
+git clone https://github.com/foggykitchen/terraform-oci-fk-adb.git
 cd terraform-oci-fk-adb/training/lesson3_adb_with_private_endpoint
 ```
 

@@ -33,7 +33,7 @@ The key difference from earlier private endpoint lessons is that this example hi
 ### Clone The Repository
 
 ```bash
-git clone https://github.com/mlinxfeld/terraform-oci-fk-adb.git
+git clone https://github.com/foggykitchen/terraform-oci-fk-adb.git
 cd terraform-oci-fk-adb/training/lesson12_adb_with_ecpu_compute_model
 ```
 

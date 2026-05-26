@@ -34,7 +34,7 @@ The key difference from earlier lessons is that this scenario keeps the same net
 ### Clone The Repository
 
 ```bash
-git clone https://github.com/mlinxfeld/terraform-oci-fk-adb.git
+git clone https://github.com/foggykitchen/terraform-oci-fk-adb.git
 cd terraform-oci-fk-adb/training/lesson6_adb_with_manual_backup
 ```
 

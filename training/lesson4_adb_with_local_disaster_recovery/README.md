@@ -32,7 +32,7 @@ Oracle positions this as the lower-cost local resilience path. Local Autonomous 
 ### Clone The Repository
 
 ```bash
-git clone https://github.com/mlinxfeld/terraform-oci-fk-adb.git
+git clone https://github.com/foggykitchen/terraform-oci-fk-adb.git
 cd terraform-oci-fk-adb/training/lesson4_adb_with_local_disaster_recovery
 ```
 

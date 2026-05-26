@@ -35,7 +35,7 @@ The key difference from [lesson10](../lesson10_adb_with_remote_disaster_recovery
 ### Clone The Repository
 
 ```bash
-git clone https://github.com/mlinxfeld/terraform-oci-fk-adb.git
+git clone https://github.com/foggykitchen/terraform-oci-fk-adb.git
 cd terraform-oci-fk-adb/training/lesson11_adb_with_remote_data_guard
 ```
 

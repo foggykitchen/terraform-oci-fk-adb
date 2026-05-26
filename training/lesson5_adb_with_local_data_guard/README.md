@@ -9,9 +9,9 @@ This lesson extends the private endpoint deployment path by introducing Local Au
 - An Autonomous Database Serverless deployment with a private endpoint
 - Reusable `terraform-oci-fk-vcn` and `terraform-oci-fk-nsg` modules composed with `terraform-oci-fk-adb`
 - Local Autonomous Data Guard enabled for a lower RTO and higher protection tier than backup-based local disaster recovery
-- The premium follow-up to the baseline backup-based local DR path from lesson4
+- The premium follow-up to the baseline backup-based local DR path from [lesson4](../lesson4_adb_with_local_disaster_recovery/)
 
-This lesson builds directly on the explicit networking composition introduced in lesson3 and reused in lesson4.
+This lesson builds directly on the explicit networking composition introduced in [lesson3](../lesson3_adb_with_private_endpoint/) and reused in [lesson4](../lesson4_adb_with_local_disaster_recovery/).
 
 ## Architecture Notes
 
@@ -25,7 +25,7 @@ This lesson uses:
 
 The networking composition lives in [networking.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson5_adb_with_local_data_guard/networking.tf), the database configuration is in [adb_UPDATED.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson5_adb_with_local_data_guard/adb_UPDATED.tf), and OCI provider authentication is configured in [provider.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson5_adb_with_local_data_guard/provider.tf).
 
-Compared with lesson4, the important difference is the service tier: Oracle positions Local Autonomous Data Guard as the lower-RTO, higher-protection option, while lesson4 stays on the lower-cost backup-based local disaster recovery baseline.
+Compared with [lesson4](../lesson4_adb_with_local_disaster_recovery/), the important difference is the service tier: Oracle positions Local Autonomous Data Guard as the lower-RTO, higher-protection option, while [lesson4](../lesson4_adb_with_local_disaster_recovery/) stays on the lower-cost backup-based local disaster recovery baseline.
 
 ## Deploy Using Terraform CLI
 
@@ -102,7 +102,7 @@ Current lesson settings:
 - `adb_nsg_id = module.fk_nsg.nsg_id`
 - `is_local_data_guard_enabled = true`
 
-The important behavioral point is that this lesson keeps the explicit networking composition from lesson3 and lesson4, but upgrades the database protection tier by enabling Local Autonomous Data Guard.
+The important behavioral point is that this lesson keeps the explicit networking composition from [lesson3](../lesson3_adb_with_private_endpoint/) and [lesson4](../lesson4_adb_with_local_disaster_recovery/), but upgrades the database protection tier by enabling Local Autonomous Data Guard.
 
 ## Outputs
 

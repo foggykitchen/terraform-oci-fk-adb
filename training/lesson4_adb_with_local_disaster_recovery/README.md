@@ -9,9 +9,9 @@ This lesson extends the private endpoint deployment path by introducing the loca
 - An Autonomous Database Serverless deployment with a private endpoint
 - Reusable `terraform-oci-fk-vcn` and `terraform-oci-fk-nsg` modules composed with `terraform-oci-fk-adb`
 - The default local backup-based disaster recovery behavior
-- The progression from private endpoint connectivity toward higher availability scenarios before introducing premium Local Autonomous Data Guard in lesson5
+- The progression from private endpoint connectivity toward higher availability scenarios before introducing premium Local Autonomous Data Guard in [lesson5](../lesson5_adb_with_local_data_guard/)
 
-This lesson builds directly on the private endpoint pattern from lesson3 and keeps the same explicit networking composition model.
+This lesson builds directly on the private endpoint pattern from [lesson3](../lesson3_adb_with_private_endpoint/) and keeps the same explicit networking composition model.
 
 ## Architecture Notes
 
@@ -25,7 +25,7 @@ This lesson uses:
 
 The networking composition lives in [networking.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson4_adb_with_local_disaster_recovery/networking.tf), the database configuration is in [adb_UPDATED.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson4_adb_with_local_disaster_recovery/adb_UPDATED.tf), and OCI provider authentication is configured in [provider.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson4_adb_with_local_disaster_recovery/provider.tf).
 
-Oracle positions this as the lower-cost local resilience path. Local Autonomous Data Guard, covered separately in lesson5, is the premium option with a lower RTO.
+Oracle positions this as the lower-cost local resilience path. Local Autonomous Data Guard, covered separately in [lesson5](../lesson5_adb_with_local_data_guard/), is the premium option with a lower RTO.
 
 ## Deploy Using Terraform CLI
 
@@ -102,7 +102,7 @@ Current lesson settings:
 - `adb_nsg_id = module.fk_nsg.nsg_id`
 - `is_local_data_guard_enabled = false`
 
-The important behavioral point is that this lesson keeps the explicit networking composition from lesson3 and leaves Local Autonomous Data Guard disabled on purpose. That makes lesson4 the baseline backup-based disaster recovery path, while lesson5 remains the premium Local Autonomous Data Guard option.
+The important behavioral point is that this lesson keeps the explicit networking composition from [lesson3](../lesson3_adb_with_private_endpoint/) and leaves Local Autonomous Data Guard disabled on purpose. That makes [lesson4](./) the baseline backup-based disaster recovery path, while [lesson5](../lesson5_adb_with_local_data_guard/) remains the premium Local Autonomous Data Guard option.
 
 ## Outputs
 

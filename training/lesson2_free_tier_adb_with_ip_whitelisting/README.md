@@ -9,9 +9,9 @@ This lesson extends the basic Free Tier ADB scenario by adding explicit IP white
 - A Free Tier Autonomous Database Serverless deployment on OCI
 - Public endpoint access with explicit IP allowlisting
 - Module usage through the local `terraform-oci-fk-adb` root module
-- The progression from lesson1 public access to a more controlled public endpoint model
+- The progression from [lesson1](../lesson1_free_tier_adb/) public access to a more controlled public endpoint model
 
-This lesson is the first place in the training track where `whitelisted_ips` are used intentionally. Unlike lesson1, the allowlist is part of the scenario itself.
+This lesson is the first place in the training track where `whitelisted_ips` are used intentionally. Unlike [lesson1](../lesson1_free_tier_adb/), the allowlist is part of the scenario itself.
 
 ## Architecture Notes
 
@@ -95,7 +95,7 @@ Current lesson settings:
 - `adb_private_endpoint = false`
 - `whitelisted_ips = [var.my_public_ip]`
 
-The important behavioral point is that this lesson keeps the public endpoint model from lesson1, but now constrains connectivity to a single public IP address.
+The important behavioral point is that this lesson keeps the public endpoint model from [lesson1](../lesson1_free_tier_adb/), but now constrains connectivity to a single public IP address.
 
 ## Outputs
 

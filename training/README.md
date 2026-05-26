@@ -18,13 +18,13 @@ The 2026 codebase prefers reusable module composition over large one-off example
 | 02 | [**Free Tier ADB with IP Whitelisting**](lesson2_free_tier_adb_with_ip_whitelisting/) | Public endpoint allowlisting |
 | 03 | [**ADB with Private Endpoint**](lesson3_adb_with_private_endpoint/) | Private endpoint networking and NSG composition |
 | 04 | [**ADB with Local Disaster Recovery**](lesson4_adb_with_local_disaster_recovery/) | In-region disaster recovery path |
-| 05 | [**ADB with Local Data Guard**](lesson5_adb_with_local_data_guard/) | Local Data Guard |
+| 05 | [**ADB with Local Autonomous Data Guard**](lesson5_adb_with_local_data_guard/) | Local Autonomous Data Guard |
 | 06 | [**ADB with Manual Backup**](lesson6_adb_with_manual_backup/) | Manual backup creation |
 | 07 | [**ADB with OCI Vault**](lesson7_adb_with_oci_vault/) | Customer-managed encryption keys |
 | 08 | [**ADB with Full Clone**](lesson8_adb_with_clone/) | Clone-based database creation |
 | 09 | [**ADB with Refreshable Clone**](lesson9_adb_with_refreshable_clone/) | Refreshable clone workflow |
 | 10 | [**ADB with Remote Disaster Recovery**](lesson10_adb_with_remote_disaster_recovery/) | Cross-region standby without Data Guard |
-| 11 | [**ADB with Remote Data Guard**](lesson11_adb_with_remote_data_guard/) | Cross-region Data Guard |
+| 11 | [**ADB with Remote Autonomous Data Guard**](lesson11_adb_with_remote_data_guard/) | Cross-region Autonomous Data Guard |
 | 12 | [**ADB with ECPU Compute Model**](lesson12_adb_with_ecpu_compute_model/) | ECPU-based sizing model |
 
 ---

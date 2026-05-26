@@ -1,227 +1,151 @@
+# Lesson 9: Autonomous Database with Refreshable Clone
 
-# FoggyKitchen OCI Autonomous Database with Terraform 
-
-## LESSON 9 - Creating Autonomous DB Serverless with Refreshable Clone
-
-This lesson introduces the advanced concept of creating a refreshable clone in an Autonomous Database Shared environment, emphasizing the critical role of such clones in maintaining data currency and supporting development efforts with minimal downtime. This module guides learners through the process of setting up a refreshable clone, which allows for the periodic synchronization of data from the source database, ensuring that the clone remains up-to-date with the latest changes. 
+This lesson extends the private endpoint deployment path by introducing refreshable cloning for Autonomous Database Serverless. It uses the local `terraform-oci-fk-adb` module together with reusable FoggyKitchen networking modules and optionally creates a refreshable clone from the source database.
 
 ![](lesson9_adb_with_refreshable_clone.png)
 
-## Deploy Using Oracle Resource Manager
+## What This Lesson Shows
 
-1. Click [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/mlinxfeld/terraform-oci-fk-adb/releases/latest/download/terraform-oci-fk-adb-lesson9.zip)
+- An Autonomous Database Serverless source deployment with a private endpoint
+- Reusable `terraform-oci-fk-vcn` and `terraform-oci-fk-nsg` modules composed with `terraform-oci-fk-adb`
+- Optional refreshable clone creation from the source database
+- Manual or automatic refresh mode selection through `adb_refreshable_mode`
+- The progression from [lesson8](../lesson8_adb_with_clone/) toward sync-oriented clone workflows
 
-    If you aren't already signed in, when prompted, enter the tenancy and user credentials.
+This lesson keeps the explicit networking composition introduced in [lesson3](../lesson3_adb_with_private_endpoint/) and reused in [lesson4](../lesson4_adb_with_local_disaster_recovery/), [lesson5](../lesson5_adb_with_local_data_guard/), [lesson6](../lesson6_adb_with_manual_backup/), [lesson7](../lesson7_adb_with_oci_vault/), and [lesson8](../lesson8_adb_with_clone/).
 
-2. Review and accept the terms and conditions.
+## Architecture Notes
 
-3. Select the region where you want to deploy the stack.
+This lesson uses:
 
-4. Follow the on-screen prompts and instructions to create the stack.
+- the local ADB module via `../..` for the source database
+- the local ADB module via `../..` for the optional refreshable clone
+- `terraform-oci-fk-vcn` for the VCN, subnet, route table, NAT gateway, and service gateway
+- `terraform-oci-fk-nsg` for the ADB NSG and rules
+- a shared private ADB endpoint subnet and NSG for both databases
+- `adb_refreshable_clone_enabled` to control whether the refreshable clone is created
+- `adb_refreshable_mode` to control refresh behavior: `MANUAL` or `AUTOMATIC`
 
-5. After creating the stack, click **Terraform Actions**, and select **Plan**.
+The networking composition lives in [networking.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson9_adb_with_refreshable_clone/networking.tf), the database configuration is in [adb_UPDATED.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson9_adb_with_refreshable_clone/adb_UPDATED.tf), and OCI provider authentication is configured in [provider.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson9_adb_with_refreshable_clone/provider.tf).
 
-6. Wait for the job to be completed, and review the plan.
+The key difference from earlier lessons is that this scenario creates a refreshable clone rather than a one-time full clone. The networking model stays explicit and shared, but the clone lifecycle now includes an ongoing synchronization mode.
 
-    To make any changes, return to the Stack Details page, click **Edit Stack**, and make the required changes. Then, run the **Plan** action again.
+## Deploy Using Terraform CLI
 
-7. If no further changes are necessary, return to the Stack Details page, click **Terraform Actions**, and select **Apply**. 
+### Clone The Repository
 
-## Deploy Using the Terraform CLI in Cloud Shell
-
-### Clone of the repo into OCI Cloud Shell
-
-Now, you'll want a local copy of this repo. You can make that with the commands:
-Clone the repo from github by executing the command as follows and then go to proper subdirectory:
-
+```bash
+git clone https://github.com/mlinxfeld/terraform-oci-fk-adb.git
+cd terraform-oci-fk-adb/training/lesson9_adb_with_refreshable_clone
 ```
-martin_lin@codeeditor:~ (eu-frankfurt-1)$ git clone https://github.com/mlinxfeld/terraform-oci-fk-adb.git
 
-martin_lin@codeeditor:~ (eu-frankfurt-1)$ cd terraform-oci-fk-adb
+### Create `terraform.tfvars`
 
-martin_lin@codeeditor:terraform-oci-fk-adb (eu-frankfurt-1)$ cd training/lesson9_adb_with_refreshable_clone/
+Start from the example file:
+
+```bash
+cp terraform.tfvars.example terraform.tfvars
 ```
 
-### Prerequisites
-Create environment file with terraform.tfvars file starting with example file:
+Minimum required values:
 
-```
-martin_lin@codeeditor:lesson9_adb_with_refreshable_clone (eu-frankfurt-1)$ cp terraform.tfvars.example terraform.tfvars
-
-martin_lin@codeeditor:lesson9_adb_with_refreshable_clone (eu-frankfurt-1)$ vi terraform.tfvars
-
+```hcl
 tenancy_ocid                  = "ocid1.tenancy.oc1..<your_tenancy_ocid>"
-compartment_ocid              = "ocid1.compartment.oc1..<your_comparment_ocid>"
+user_ocid                     = "ocid1.user.oc1..<your_user_ocid>"
+compartment_ocid              = "ocid1.compartment.oc1..<your_compartment_ocid>"
 region                        = "<oci_region>"
+fingerprint                   = "<fingerprint>"
+private_key_path              = "<private_key_path>"
 adb_password                  = "<adb_password>"
+adb_refreshable_mode          = "MANUAL"
 adb_refreshable_clone_enabled = false
 ```
 
 ### Initialize Terraform
 
-Run the following command to initialize Terraform environment:
-
-```
-martin_lin@codeeditor:lesson9_adb_with_refreshable_clone (eu-frankfurt-1)$ terraform init
-
-Initializing the backend...
-Initializing modules...
-Downloading git::https://github.com/mlinxfeld/terraform-oci-fk-adb.git for fk-adb...
-- fk-adb in .terraform/modules/fk-adb
-
-Initializing provider plugins...
-- Reusing previous version of oracle/oci from the dependency lock file
-- Reusing previous version of hashicorp/tls from the dependency lock file
-- Installing oracle/oci v5.29.0...
-- Installed oracle/oci v5.29.0 (signed by a HashiCorp partner, key ID 1533A49284137CEB)
-- Installing hashicorp/tls v4.0.5...
-- Installed hashicorp/tls v4.0.5 (signed by HashiCorp)
-
-Partner and community providers are signed by their developers.
-If you'd like to know more about provider signing, you can read about it here:
-https://www.terraform.io/docs/cli/plugins/signing.html
-
-Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
+```bash
+terraform init
 ```
 
-### Apply the changes 
+Expected module sources:
 
-Run the following command for applying changes with the proposed plan:
+- local `../..` for the ADB modules
+- `terraform-oci-fk-vcn` for networking
+- `terraform-oci-fk-nsg` for NSG resources
 
-```
-martin_lin@codeeditor:lesson9_adb_with_refreshable_clone (eu-frankfurt-1)$ terraform apply
-module.oci-fk-adb.data.oci_core_services.AllOCIServices[0]: Reading...
-module.oci-fk-adb.data.oci_core_services.AllOCIServices[0]: Read complete after 0s [id=CoreServicesDataSource-0]
+### Apply
 
-Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
-  + create
-
-Terraform will perform the following actions:
-
-  # module.oci-fk-adb.oci_core_nat_gateway.fk_adb_natgw[0] will be created
-  + resource "oci_core_nat_gateway" "fk_adb_natgw" {
-      + block_traffic  = (known after apply)
-      + compartment_id = "ocid1.compartment.oc1..aaaaaaaaiyy4srmrb32v5rlniicwmpxsytywiucgbcp5ext6e4ahjfuloewa"
-      + defined_tags   = (known after apply)
-      + display_name   = "fk_adb_natgw"
-      + freeform_tags  = (known after apply)
-      + id             = (known after apply)
-      + nat_ip         = (known after apply)
-      + public_ip_id   = (known after apply)
-      + route_table_id = (known after apply)
-      + state          = (known after apply)
-      + time_created   = (known after apply)
-      + vcn_id         = (known after apply)
-    }
-
-(...)
-
-Plan: 22 to add, 0 to change, 0 to destroy.
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-  Enter a value: yes
-
-(...)
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [5m40s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [5m50s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [6m0s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [6m10s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [6m20s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [6m30s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [6m40s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [6m50s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [7m0s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [7m10s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [7m20s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [7m30s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [7m40s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [7m50s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [8m0s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [8m10s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [8m20s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [8m30s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [8m40s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Still creating... [8m50s elapsed]
-module.oci-fk-adb-clone.oci_database_autonomous_database.fk_adb_database: Creation complete after 8m52s [id=ocid1.autonomousdatabase.oc1.eu-frankfurt-1.antheljtdngk4giamyoozpwdyrlegqat36k2huplh2szdrhyke5bsgreempq]
-module.oci-fk-adb-clone.oci_database_autonomous_database_wallet.fk_adb_database_wallet: Creating...
-module.oci-fk-adb-clone.oci_database_autonomous_database_wallet.fk_adb_database_wallet: Creation complete after 2s [id=DatabaseAutonomousDatabaseWalletResource-4153897857]
-
-Apply complete! Resources: 22 added, 0 changed, 0 destroyed.
-
+```bash
+terraform apply
 ```
 
-### Destroy the changes 
+With the current defaults, this lesson creates:
 
-Run the following command for destroying all resources:
+- one source Autonomous Database Serverless instance
+- one generated wallet password for the source database
+- one source database wallet download resource
+- one VCN
+- one subnet
+- one route table
+- one NAT gateway
+- one service gateway
+- one NSG with ingress and egress rules
 
+If you enable `adb_refreshable_clone_enabled = true`, the lesson also creates:
+
+- one refreshable clone Autonomous Database Serverless instance
+- one generated wallet password for the refreshable clone
+- one refreshable clone wallet download resource
+
+## Key Configuration
+
+Current lesson settings:
+
+- `adb_database_db_name = "FoggyKitchenADBSource"` for the source
+- `adb_database_display_name = "FoggyKitchenADB_Source"` for the source
+- `adb_database_db_name = "FoggyKitchenADBRefClone"` for the refreshable clone
+- `adb_database_display_name = "FoggyKitchenADB_RefreshableClone"` for the refreshable clone
+- `adb_database_db_workload = "OLTP"`
+- `adb_free_tier = false`
+- `adb_database_cpu_core_count = 1`
+- `adb_database_data_storage_size_in_tbs = 1`
+- `use_existing_vcn = true`
+- `adb_private_endpoint = true`
+- `adb_subnet_id = module.fk_vcn.subnet_ids["adb_private"]`
+- `adb_nsg_id = module.fk_nsg.nsg_id`
+- `source_type = "CLONE_TO_REFRESHABLE"` for the clone
+- `adb_refreshable_mode = "MANUAL"` by default
+- `adb_refreshable_clone_enabled = false`
+
+The important behavioral point is that this lesson keeps the explicit networking composition from [lesson3](../lesson3_adb_with_private_endpoint/) through [lesson8](../lesson8_adb_with_clone/), but introduces a clone lifecycle that can be refreshed over time instead of remaining a one-time copy.
+
+## Outputs
+
+This lesson exposes the outputs from the root module, including:
+
+- database identifiers and connection URLs for the source database
+- wallet content for the source database
+- network details for the private endpoint path
+
+When the refreshable clone is enabled, the lesson also creates a second set of database and wallet resources for the clone.
+
+## Destroy
+
+To remove all resources created by this lesson:
+
+```bash
+terraform destroy
 ```
-martin_lin@codeeditor:lesson9_adb_with_refreshable_clone (eu-frankfurt-1)$ terraform destroy 
-module.oci-fk-adb.random_password.wallet_password: Refreshing state... [id=none]
-module.oci-fk-adb.data.oci_core_services.AllOCIServices[0]: Reading...
-module.oci-fk-adb.oci_core_vcn.fk_adb_vcn[0]: Refreshing state... [id=ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaadngk4giaak76a4mrugw77uydl3caqh4xbwetopo6snh4vmmnjifq]
-module.oci-fk-adb.data.oci_core_services.AllOCIServices[0]: Read complete after 0s [id=CoreServicesDataSource-0]
-module.oci-fk-adb.oci_core_network_security_group.fk_adb_nsg[0]: Refreshing state... [id=ocid1.networksecuritygroup.oc1.eu-frankfurt-1.aaaaaaaak6aax7qtie2axbxy3byrjj657rlocwzzxwk7yo5zfymm7awqunra]
-module.oci-fk-adb.oci_core_service_gateway.fk_adb_sg[0]: Refreshing state... [id=ocid1.servicegateway.oc1.eu-frankfurt-1.aaaaaaaa5ineold47kswhdfmosexpheifiqixqsm5emnujypaqrozunow2yq]
-module.oci-fk-adb.oci_core_nat_gateway.fk_adb_natgw[0]: Refreshing state... [id=ocid1.natgateway.oc1.eu-frankfurt-1.aaaaaaaasqkk4o4zqoxbniatchcawkthx66twlzaj2at26u3gsta3zgmwkra]
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_egress_group_sec_rule[0]: Refreshing state... [id=F58926]
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_ingress_group_sec_rule[0]: Refreshing state... [id=8D6847]
-module.oci-fk-adb.oci_core_route_table.fk_adb_rt_via_natgw_and_sg[0]: Refreshing state... [id=ocid1.routetable.oc1.eu-frankfurt-1.aaaaaaaaq56qlixpwxwxdj4tl5ycwk7kyc2pr6rd47dj7xro5lqwqg5zfozq]
-module.oci-fk-adb.oci_core_subnet.fk_adb_subnet[0]: Refreshing state... [id=ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaag65izip52vdyyirngear2ldv3vjut6euiebi2adckm7driqfa3oa]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Refreshing state... [id=ocid1.autonomousdatabase.oc1.eu-frankfurt-1.antheljtdngk4giatol3tuonq74wvp4xnth2itmuymkulx3a6ms65kyjaqia]
-module.oci-fk-adb.oci_database_autonomous_database_wallet.fk_adb_database_wallet: Refreshing state... [id=DatabaseAutonomousDatabaseWalletResource-1831233018]
 
-Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
-  - destroy
+## Contributing
 
-Terraform will perform the following actions:
+This project is open source. Contributions are welcome through pull requests.
 
-  # module.oci-fk-adb.oci_core_nat_gateway.fk_adb_natgw[0] will be destroyed
-  - resource "oci_core_nat_gateway" "fk_adb_natgw" {
-      - block_traffic  = false -> null
-      - compartment_id = "ocid1.compartment.oc1..aaaaaaaaiyy4srmrb32v5rlniicwmpxsytywiucgbcp5ext6e4ahjfuloewa" -> null
-      - defined_tags   = {} -> null
-      - display_name   = "fk_adb_natgw" -> null
-      - freeform_tags  = {} -> null
-      - id             = "ocid1.natgateway.oc1.eu-frankfurt-1.aaaaaaaasqkk4o4zqoxbniatchcawkthx66twlzaj2at26u3gsta3zgmwkra" -> null
-      - nat_ip         = "141.147.45.193" -> null
-      - public_ip_id   = "ocid1.publicip.oc1.eu-frankfurt-1.aaaaaaaaeptr7efqvm6n2fcurqceiau7ldpouvyhcju42h7ltpgffkaueyla" -> null
-      - state          = "AVAILABLE" -> null
-      - time_created   = "2024-04-02 13:51:00.075 +0000 UTC" -> null
-      - vcn_id         = "ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaadngk4giaak76a4mrugw77uydl3caqh4xbwetopo6snh4vmmnjifq" -> null
-    }
+## License
 
-(...)
+Licensed under the **Universal Permissive License (UPL), Version 1.0**.
+See [LICENSE](../../LICENSE) for details.
 
-Plan: 0 to add, 0 to change, 22 to destroy.
+---
 
-Do you really want to destroy all resources?
-  Terraform will destroy all your managed infrastructure, as shown above.
-  There is no undo. Only 'yes' will be accepted to confirm.
-
-  Enter a value: yes
-
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_egress_group_sec_rule[0]: Destroying... [id=F58926]
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_ingress_group_sec_rule[0]: Destroying... [id=8D6847]
-module.oci-fk-adb.oci_database_autonomous_database_wallet.fk_adb_database_wallet: Destroying... [id=DatabaseAutonomousDatabaseWalletResource-1831233018]
-module.oci-fk-adb.oci_database_autonomous_database_wallet.fk_adb_database_wallet: Destruction complete after 0s
-
-(...)
-
-module.oci-fk-adb.oci_core_network_security_group.fk_adb_nsg[0]: Destroying... [id=ocid1.networksecuritygroup.oc1.eu-frankfurt-1.aaaaaaaak6aax7qtie2axbxy3byrjj657rlocwzzxwk7yo5zfymm7awqunra]
-module.oci-fk-adb.oci_core_network_security_group.fk_adb_nsg[0]: Destruction complete after 0s
-module.oci-fk-adb.oci_core_vcn.fk_adb_vcn[0]: Destroying... [id=ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaadngk4giaak76a4mrugw77uydl3caqh4xbwetopo6snh4vmmnjifq]
-module.oci-fk-adb.oci_core_vcn.fk_adb_vcn[0]: Destruction complete after 1s
-
-Destroy complete! Resources: 22 destroyed.
-```
+© 2026 [FoggyKitchen.com](https://foggykitchen.com) - Cloud. Code. Clarity.

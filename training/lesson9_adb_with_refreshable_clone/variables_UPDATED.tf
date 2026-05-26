@@ -11,5 +11,5 @@ variable "adb_refreshable_mode" {
 }
 
 variable "adb_refreshable_clone_enabled" {
-    default = false
+  default = false
 }

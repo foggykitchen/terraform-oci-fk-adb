@@ -7,7 +7,7 @@ data "oci_identity_region_subscriptions" "home_region_subscriptions" {
 }
 
 data "oci_identity_regions" "oci_regions" {
-  provider   = oci.homeregion
+  provider = oci.homeregion
   filter {
     name   = "name"
     values = [var.region]

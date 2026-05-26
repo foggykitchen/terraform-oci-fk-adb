@@ -1,19 +1,26 @@
-resource "oci_identity_dynamic_group" "FoggyKitchenDynamicGroup" {
-  provider       = oci.homeregion
-  name           = "FoggyKitchenDynamicGroup"
-  description    = "FoggyKitchen Dynamic Group"
-  compartment_id = var.tenancy_ocid
-  matching_rule  = "All {resource.compartment.id = '${var.compartment_ocid}'}"
-}
+module "fk_policy_vault" {
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-policy.git?ref=v0.1.0"
 
-resource "oci_identity_policy" "FoggyKitchenPolicy" {
-  provider       = oci.homeregion
-  depends_on     = [oci_identity_dynamic_group.FoggyKitchenDynamicGroup]
-  name           = "FoggyKitchenPolicy"
-  description    = "FoggyKitchen Policy (use of OCI Vault in tenancy)"
-  compartment_id = var.tenancy_ocid
-  statements     = [
-    "Allow dynamic-group ${oci_identity_dynamic_group.FoggyKitchenDynamicGroup.name} to use vaults in tenancy",
-    "Allow dynamic-group ${oci_identity_dynamic_group.FoggyKitchenDynamicGroup.name} to use keys in tenancy",
+  providers = {
+    oci = oci.homeregion
+  }
+
+  tenancy_ocid = var.tenancy_ocid
+
+  dynamic_group = {
+    name          = "FoggyKitchenDynamicGroup"
+    description   = "FoggyKitchen Dynamic Group"
+    matching_rule = "All {resource.compartment.id = '${var.compartment_ocid}'}"
+  }
+
+  policies = [
+    {
+      name        = "FoggyKitchenPolicy"
+      description = "FoggyKitchen Policy (use of OCI Vault in tenancy)"
+      statements = [
+        "Allow dynamic-group FoggyKitchenDynamicGroup to use vaults in tenancy",
+        "Allow dynamic-group FoggyKitchenDynamicGroup to use keys in tenancy",
+      ]
+    }
   ]
 }

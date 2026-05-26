@@ -1,55 +1,85 @@
-# FoggyKitchen Autonomous Database Serverless with Terraform 
+# FoggyKitchen OCI Autonomous Database Serverless with Terraform
 
-## Course description
+This directory contains the progressive examples used in the FoggyKitchen Autonomous Database Serverless training track.
 
-This is an in-depth course designed to equip participants with the skills to efficiently deploy and manage Oracle's Autonomous Database Serverless instances using Terraform, a popular infrastructure as code (IaC) tool. This course covers the foundational principles of Autonomous Database Serverless, emphasizing hands-on practice with Terraform to automate the provisioning, scaling, and management of databases in the cloud. Participants will learn to navigate the Oracle Cloud Infrastructure, implement security best practices, manage backups, and understand disaster recovery options. By the end of this course, attendees will have the knowledge to leverage Terraform for streamlined database administration, ensuring high availability and performance for critical applications.
+Each lesson builds on the previous one, moving from a minimal Free Tier deployment through public endpoint controls, private endpoints, disaster recovery, backup, Vault integration, cloning, and compute model changes.
+
+The 2026 codebase prefers reusable module composition over large one-off examples wherever that makes the architecture clearer and more maintainable.
 
 ![](terraform-oci-fk-atp-lessons.png)
 
-[Lesson 1: Creating Free Tier Autonomous DB Serverless](lesson1_free_tier_adb)
+---
 
-This lesson guides you through the process of creating an Autonomous Database (ADB) Serverless on Oracle's Free Tier, offering a practical start for users seeking cost-effective solutions without compromising on capabilities.  
+## Example Overview
 
-[Lesson 2: Creating Free Tier Autonomous DB Serverless with IP Whitelisting](lesson2_free_tier_adb_with_ip_whitelisting)
+| Lesson | Title | Key Topics |
+|---:|---|---|
+| 01 | [**Free Tier ADB**](lesson1_free_tier_adb/) | Minimal Autonomous Database Serverless deployment |
+| 02 | [**Free Tier ADB with IP Whitelisting**](lesson2_free_tier_adb_with_ip_whitelisting/) | Public endpoint allowlisting |
+| 03 | [**ADB with Private Endpoint**](lesson3_adb_with_private_endpoint/) | Private endpoint networking and NSG composition |
+| 04 | [**ADB with Local Disaster Recovery**](lesson4_adb_with_local_disaster_recovery/) | In-region disaster recovery path |
+| 05 | [**ADB with Local Autonomous Data Guard**](lesson5_adb_with_local_data_guard/) | Local Autonomous Data Guard |
+| 06 | [**ADB with Manual Backup**](lesson6_adb_with_manual_backup/) | Manual backup creation |
+| 07 | [**ADB with OCI Vault**](lesson7_adb_with_oci_vault/) | Customer-managed encryption keys |
+| 08 | [**ADB with Full Clone**](lesson8_adb_with_clone/) | Clone-based database creation |
+| 09 | [**ADB with Refreshable Clone**](lesson9_adb_with_refreshable_clone/) | Refreshable clone workflow |
+| 10 | [**ADB with Remote Disaster Recovery**](lesson10_adb_with_remote_disaster_recovery/) | Cross-region standby without Data Guard |
+| 11 | [**ADB with Remote Autonomous Data Guard**](lesson11_adb_with_remote_data_guard/) | Cross-region Autonomous Data Guard |
+| 12 | [**ADB with ECPU Compute Model**](lesson12_adb_with_ecpu_compute_model/) | ECPU-based sizing model |
 
-In this lesson, we'll set up a Free Tier Autonomous Database and implement IP whitelisting, including our public IP address. This approach will restrict access to the publicly available database exclusively to our laptop.
+---
 
-[Lesson 3: Creating Autonomous DB Serverless with Private Endpoint](lesson3_adb_with_private_endpoint)
+## How To Use
 
-In this lesson, we explore the intricacies of setting up an Oracle Autonomous Database (ADB) with a private endpoint, focusing on enhancing security and network isolation. This lesson provides step-by-step instructions on configuring your ADB instance in Oracle Cloud Infrastructure (OCI) to use private endpoints, ensuring secure, internal access to your database without exposure to the public internet. 
+Each lesson directory includes:
 
-[Lesson 4: Creating Autonomous DB Serverless with Local Disaster Recovery](lesson4_adb_with_local_disaster_recovery)
+- Terraform configuration files
+- Architecture or deployment screenshots
+- A step-by-step `README.md`
+- A `terraform.tfvars.example` starter file
 
-In this lesson, we'll delve into the creation of an Oracle Autonomous Database (ADB) with a focus on incorporating local disaster recovery, ensuring your data remains secure and accessible, even during local infrastructure failures.  
+To run a lesson:
 
-[Lesson 5: Creating Autonomous DB Serverless with Local Data Guard](lesson5_adb_with_local_data_guard)
+```bash
+cd training/lesson1_free_tier_adb
+terraform init
+terraform apply
+```
 
-In this lesson, we'll delve into the creation of an Oracle Autonomous Database (ADB) with a focus on incorporating local Data Guard, ensuring your data remains secure and accessible, even during local infrastructure failures. 
+The lessons can be applied independently, but the recommended learning path is sequential:
 
-[Lesson 6: Creating Autonomous DB Serverless with Manual Backup](lesson6_adb_with_manual_backup)
+01 -> 02 -> 03 -> 04 -> 05 -> 06 -> 07 -> 08 -> 09 -> 10 -> 11 -> 12
 
-In this lesson, we'll focus on configuring an Autonomous Database with manual backup capabilities, which will enable you to create backups on demand. These manual backups will serve as the foundation for creating clone Autonomous DB Instances, providing you with greater flexibility and control over your database environment.
+---
 
-[Lesson 7: Creating Autonomous DB Serverless integrated with OCI Vault](lesson7_adb_with_oci_vault)
+## Design Principles
 
-This lesson delves into the intricacies of setting up an Autonomous Database Shared instance, emphasizing the integration with OCI Vault for top-tier security alignment with organizational policies. It meticulously covers how to configure OCI Vault to serve as a repository for customer-managed encryption keys, a critical step for organizations that mandate direct control over their encryption mechanisms. The lesson clarifies the process whereby the Autonomous Database employs the customer-managed master encryption key stored in OCI Vault to generate the Transparent Data Encryption (TDE) master key, ensuring data is encrypted under the organization's governance.
+- One lesson equals one architectural goal
+- Dependencies stay explicit
+- The module under test is always the local OCI ADB module
+- Training examples should be runnable on their own
+- Documentation should mirror the actual module contract
 
-[Lesson 8: Creating Autonomous DB Serverless with Full Clone](lesson8_adb_with_clone)
+The training examples intentionally avoid:
 
-This lesson focuses on the process of creating an Autonomous Database Shared instance by leveraging the cloning feature, an essential technique for database management and scalability. It outlines the steps to efficiently clone an existing database, allowing for the quick deployment of test environments or the replication of data for analytical purposes. Through hands-on exercises, participants will learn to utilize the cloning capabilities to enhance their database infrastructure, ensuring seamless data management and operational continuity in Oracle Cloud Infrastructure.
+- Full landing zones
+- Hidden dependencies between lessons
+- Opinionated enterprise wrappers
 
-[Lesson 9: Creating Autonomous DB Serverless with Refreshable Clone](lesson9_adb_with_refreshable_clone)
+---
 
-This lesson introduces the advanced concept of creating a refreshable clone in an Autonomous Database Shared environment, emphasizing the critical role of such clones in maintaining data currency and supporting development efforts with minimal downtime. This module guides learners through the process of setting up a refreshable clone, which allows for the periodic synchronization of data from the source database, ensuring that the clone remains up-to-date with the latest changes. 
+## Related Resources
 
-[Lesson 10: Creating Autonomous DB Serverless with Remote Standby (Disaster Recovery)](lesson10_adb_with_remote_disaster_recovery)
+- [FoggyKitchen ADB Module](../README.md)
+- [FoggyKitchen.com](https://foggykitchen.com/)
 
-This lesson explores the essential techniques for setting up an Autonomous Database (ADB) with shared resources, focusing on the implementation of a remote standby database for disaster recovery without utilizing DataGuard technology. 
+---
 
-[Lesson 11: Creating Autonomous DB Serverless with Remote Standby (DataGuard-based)](lesson11_adb_with_remote_data_guard)
+## License
 
-This lesson explores the essential techniques for setting up an Autonomous Database (ADB) with shared resources, focusing on the implementation of a remote standby database for disaster recovery utilizing DataGuard technology.  
+Licensed under the **Universal Permissive License (UPL), Version 1.0**.
+See [LICENSE](../LICENSE) for details.
 
-[Lesson 12: Creating Autonomous DB Serverless with ECPU Compute Model](lesson12_adb_with_ecpu_compute_model)
+---
 
-In this lesson we delve into the realm of database management, focusing on the creation of Autonomous Database (ADB) Serverless instances using the ECPU (Elastic Compute Processing Unit) Compute Model. Throughout the lesson, participants will gain a comprehensive understanding of the ECPU Compute Model, its advantages, and its suitability for various database workloads. We explore the intricacies of configuring and deploying Autonomous Database instances in a serverless environment, emphasizing the flexibility, scalability, and cost-effectiveness it offers.
+© 2026 [FoggyKitchen.com](https://foggykitchen.com) - Cloud. Code. Clarity.

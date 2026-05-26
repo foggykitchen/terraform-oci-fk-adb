@@ -1,6 +1,6 @@
-title: "FoggyKitchen Autonomous Database Serverless with Terraform - LESSON 5 - Creating Autonomous DB Serverless with Local Data Guard."
-description: "In this lesson, we'll delve into the creation of an Oracle Autonomous Database (ADB) with a focus on incorporating local Autonomous DataGuard."
-stackDescription: "In this lesson, we'll delve into the creation of an Oracle Autonomous Database (ADB) with a focus on incorporating local Autonomous DataGuard."
+title: "FoggyKitchen Autonomous Database Serverless with Terraform - LESSON 5 - Creating Autonomous DB Serverless with Local Autonomous Data Guard."
+description: "In this lesson, we'll delve into the creation of an Oracle Autonomous Database (ADB) with a focus on incorporating Local Autonomous Data Guard."
+stackDescription: "In this lesson, we'll delve into the creation of an Oracle Autonomous Database (ADB) with a focus on incorporating Local Autonomous Data Guard."
 schemaVersion: 1.1.0
 version: "20201028"
 locale: "en"
@@ -17,7 +17,6 @@ variableGroups:
   variables:
   - compartment_ocid
   - adb_password
-  - is_local_data_guard_enabled
 
 variables:
 
@@ -50,12 +49,5 @@ variables:
     title: "Compartment"
     description: "Choose Comparment for OCI Autonomous Database Serverless"
     type: oci:identity:compartment:id
-    required: true
-    visibile: true 
-
-  is_local_data_guard_enabled:
-    title: "Enable local ADG?"
-    description: "Decide if you want to enable local Autonomous DataGuard (ADG)"
-    type: boolean
     required: true
     visibile: true 

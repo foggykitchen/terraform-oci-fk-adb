@@ -1,6 +1,6 @@
-title: "FoggyKitchen Autonomous Database Serverless with Terraform - LESSON 11 - Creating Autonomous DB Serverless with Remote Standby (DataGuard-based)."
-description: "This lesson explores the essential techniques for setting up an Autonomous Database (ADB) with shared resources, focusing on the implementation of a remote standby database for disaster recovery utilizing DataGuard technology."
-stackDescription: "This lesson explores the essential techniques for setting up an Autonomous Database (ADB) with shared resources, focusing on the implementation of a remote standby database for disaster recovery utilizing DataGuard technology."
+title: "FoggyKitchen Autonomous Database Serverless with Terraform - LESSON 11 - Creating Autonomous DB Serverless with Remote Autonomous Data Guard."
+description: "This lesson explores a cross-region Autonomous Database Serverless deployment with a private endpoint and a remote standby database protected through Autonomous Data Guard."
+stackDescription: "This lesson explores a cross-region Autonomous Database Serverless deployment with a private endpoint and a remote standby database protected through Autonomous Data Guard."
 schemaVersion: 1.1.0
 version: "20201028"
 locale: "en"
@@ -12,7 +12,7 @@ variableGroups:
   - tenancy_ocid
 
 - title: "Required Configuration"
-  visible: true  
+  visible: true
   variables:
   - compartment_ocid
   - adb_password
@@ -31,14 +31,14 @@ variables:
 
   primary_region:
     title: "Primary Region"
-    description: "Choose Primary Region for your OCI Autonomous Database Serverless"
+    description: "Choose the primary region for your OCI Autonomous Database Serverless deployment"
     type: oci:identity:region:name
     required: true
     visibile: true
 
   standby_region:
     title: "Standby Region"
-    description: "Choose Standby Region for your OCI Autonomous Database Serverless"
+    description: "Choose the standby region for your OCI Autonomous Database Serverless deployment"
     type: oci:identity:region:name
     required: true
     visibile: true
@@ -49,15 +49,13 @@ variables:
     type: password
     minLength: 12
     maxLength: 30
-    pattern: ^[A-Za-z][A-Za-z0-9_#\$]+$     
+    pattern: ^[A-Za-z][A-Za-z0-9_#\$]+$
     required: true
     visibile: true
 
   compartment_ocid:
     title: "Compartment"
-    description: "Choose Comparment for OCI Autonomous Database Serverless"
+    description: "Choose compartment for OCI Autonomous Database Serverless"
     type: oci:identity:compartment:id
     required: true
-    visibile: true 
-
-  
+    visibile: true

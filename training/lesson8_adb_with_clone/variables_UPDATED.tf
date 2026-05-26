@@ -6,5 +6,5 @@ variable "region" {}
 variable "fingerprint" {}
 variable "adb_password" {}
 variable "adb_full_clone_enabled" {
-    default = false
+  default = false
 }

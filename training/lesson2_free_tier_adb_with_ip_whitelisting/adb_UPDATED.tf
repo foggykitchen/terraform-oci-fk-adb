@@ -1,5 +1,5 @@
 module "oci-fk-adb" {
-  source                                = "github.com/mlinxfeld/terraform-oci-fk-adb"
+  source                                = "../.."
   adb_database_db_name                  = "FoggyKitchenFreeTierADB"
   adb_database_display_name             = "FoggyKitchenFreeTierADB"
   adb_password                          = var.adb_password
@@ -12,4 +12,3 @@ module "oci-fk-adb" {
   adb_private_endpoint                  = false
   whitelisted_ips                       = [var.my_public_ip]
 }
-

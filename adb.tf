@@ -21,7 +21,7 @@ resource "oci_database_autonomous_database" "fk_adb_database" {
   is_auto_scaling_enabled             = var.is_auto_scaling_enabled
   is_auto_scaling_for_storage_enabled = var.is_auto_scaling_for_storage_enabled 
   is_local_data_guard_enabled         = var.is_local_data_guard_enabled
-  whitelisted_ips                     = var.adb_private_endpoint ? null : var.whitelisted_ips
+  whitelisted_ips                     = (var.adb_private_endpoint || length(var.whitelisted_ips) == 0) ? null : var.whitelisted_ips
   nsg_ids                             = var.adb_private_endpoint ? [local.adb_nsg_id] : null
   private_endpoint_label              = var.adb_private_endpoint ? var.adb_private_endpoint_label : null
   subnet_id                           = var.adb_private_endpoint ? local.adb_subnet_id : null

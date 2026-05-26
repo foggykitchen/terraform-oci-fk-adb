@@ -2,13 +2,13 @@ terraform {
   required_version = ">= 1.0"
   required_providers {
     oci = {
-      source  = "oracle/oci"
+      source = "oracle/oci"
     }
   }
 }
 
 provider "oci" {
-  alias            = "primary"  
+  alias            = "primary"
   tenancy_ocid     = var.tenancy_ocid
   user_ocid        = var.user_ocid
   fingerprint      = var.fingerprint
@@ -17,7 +17,7 @@ provider "oci" {
 }
 
 provider "oci" {
-  alias            = "standby" 
+  alias            = "standby"
   tenancy_ocid     = var.tenancy_ocid
   user_ocid        = var.user_ocid
   fingerprint      = var.fingerprint

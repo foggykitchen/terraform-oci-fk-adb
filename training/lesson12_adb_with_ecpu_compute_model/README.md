@@ -1,244 +1,138 @@
+# Lesson 12: Autonomous Database with the ECPU Compute Model
 
-# FoggyKitchen OCI Autonomous Database with Terraform 
-
-## LESSON 12 - Creating Autonomous DB Serverless with ECPU Compute Model
-
-In this lesson we delve into the realm of database management, focusing on the creation of Autonomous Database (ADB) Serverless instances using the ECPU (Elastic Compute Processing Unit) Compute Model. Throughout the lesson, participants will gain a comprehensive understanding of the ECPU Compute Model, its advantages, and its suitability for various database workloads. We explore the intricacies of configuring and deploying Autonomous Database instances in a serverless environment, emphasizing the flexibility, scalability, and cost-effectiveness it offers.
+This lesson introduces Autonomous Database Serverless using the ECPU compute model instead of the older OCPU sizing approach. It uses the local `terraform-oci-fk-adb` module together with reusable FoggyKitchen networking modules to create a private endpoint deployment with autoscaling enabled for both compute and storage.
 
 ![](lesson12_adb_with_ecpu_compute_model.png)
 
-## Deploy Using Oracle Resource Manager
+## What This Lesson Shows
 
-1. Click [![Deploy to Oracle Cloud](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/mlinxfeld/terraform-oci-fk-adb/releases/latest/download/terraform-oci-fk-adb-lesson12.zip)
+- An Autonomous Database Serverless deployment with a private endpoint
+- The ECPU compute model through `adb_compute_model = "ECPU"`
+- Reusable `terraform-oci-fk-vcn` and `terraform-oci-fk-nsg` modules composed with `terraform-oci-fk-adb`
+- Autoscaling enabled for compute and storage
+- The progression from [lesson3](../lesson3_adb_with_private_endpoint/) toward a newer compute sizing model
 
-    If you aren't already signed in, when prompted, enter the tenancy and user credentials.
+This lesson keeps the explicit networking composition introduced in [lesson3](../lesson3_adb_with_private_endpoint/), but changes the database sizing model to ECPU.
 
-2. Review and accept the terms and conditions.
+## Architecture Notes
 
-3. Select the region where you want to deploy the stack.
+This lesson uses:
 
-4. Follow the on-screen prompts and instructions to create the stack.
+- the local ADB module via `../..`
+- `terraform-oci-fk-vcn` for the VCN, subnet, route table, NAT gateway, and service gateway
+- `terraform-oci-fk-nsg` for the ADB NSG and rules
+- a private ADB endpoint
+- the ECPU compute model with autoscaling enabled
 
-5. After creating the stack, click **Terraform Actions**, and select **Plan**.
+The networking composition lives in [networking.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson12_adb_with_ecpu_compute_model/networking.tf), the database configuration is in [adb_UPDATED.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson12_adb_with_ecpu_compute_model/adb_UPDATED.tf), and OCI provider authentication is configured in [provider.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/training/lesson12_adb_with_ecpu_compute_model/provider.tf).
 
-6. Wait for the job to be completed, and review the plan.
+The key difference from earlier private endpoint lessons is that this example highlights the newer ECPU model and autoscaling behavior rather than the older CPU-core-count based sizing.
 
-    To make any changes, return to the Stack Details page, click **Edit Stack**, and make the required changes. Then, run the **Plan** action again.
+## Deploy Using Terraform CLI
 
-7. If no further changes are necessary, return to the Stack Details page, click **Terraform Actions**, and select **Apply**. 
+### Clone The Repository
 
-## Deploy Using the Terraform CLI in Cloud Shell
-
-### Clone of the repo into OCI Cloud Shell
-
-Now, you'll want a local copy of this repo. You can make that with the commands:
-Clone the repo from github by executing the command as follows and then go to proper subdirectory:
-
-```
-martin_lin@codeeditor:~ (eu-frankfurt-1)$ git clone https://github.com/mlinxfeld/terraform-oci-fk-adb.git
-
-martin_lin@codeeditor:~ (eu-frankfurt-1)$ cd terraform-oci-fk-adb
-
-martin_lin@codeeditor:terraform-oci-fk-adb (eu-frankfurt-1)$ cd training/lesson12_adb_with_ecpu_compute_model/
+```bash
+git clone https://github.com/foggykitchen/terraform-oci-fk-adb.git
+cd terraform-oci-fk-adb/training/lesson12_adb_with_ecpu_compute_model
 ```
 
-### Prerequisites
-Create environment file with terraform.tfvars file starting with example file:
+### Create `terraform.tfvars`
 
+Start from the example file:
+
+```bash
+cp terraform.tfvars.example terraform.tfvars
 ```
-martin_lin@codeeditor:lesson12_adb_with_ecpu_compute_model (eu-frankfurt-1)$ cp terraform.tfvars.example terraform.tfvars
 
-martin_lin@codeeditor:lesson12_adb_with_ecpu_compute_model (eu-frankfurt-1)$ vi terraform.tfvars
+Minimum required values:
 
-tenancy_ocid       = "ocid1.tenancy.oc1..<your_tenancy_ocid>"
-compartment_ocid   = "ocid1.compartment.oc1..<your_comparment_ocid>"
-region             = "<oci_region>"
-adb_password       = "<adb_password>"
+```hcl
+tenancy_ocid     = "ocid1.tenancy.oc1..<your_tenancy_ocid>"
+user_ocid        = "ocid1.user.oc1..<your_user_ocid>"
+compartment_ocid = "ocid1.compartment.oc1..<your_compartment_ocid>"
+region           = "<oci_region>"
+fingerprint      = "<fingerprint>"
+private_key_path = "<private_key_path>"
+adb_password     = "<adb_password>"
 ```
 
 ### Initialize Terraform
 
-Run the following command to initialize Terraform environment:
-
-```
-martin_lin@codeeditor:lesson12_adb_with_ecpu_compute_model (eu-frankfurt-1)$ terraform init
-
-Initializing the backend...
-Initializing modules...
-Downloading git::https://github.com/mlinxfeld/terraform-oci-fk-adb.git for fk-adb...
-- fk-adb in .terraform/modules/fk-adb
-
-Initializing provider plugins...
-- Reusing previous version of oracle/oci from the dependency lock file
-- Reusing previous version of hashicorp/tls from the dependency lock file
-- Installing oracle/oci v5.29.0...
-- Installed oracle/oci v5.29.0 (signed by a HashiCorp partner, key ID 1533A49284137CEB)
-- Installing hashicorp/tls v4.0.5...
-- Installed hashicorp/tls v4.0.5 (signed by HashiCorp)
-
-Partner and community providers are signed by their developers.
-If you'd like to know more about provider signing, you can read about it here:
-https://www.terraform.io/docs/cli/plugins/signing.html
-
-Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
+```bash
+terraform init
 ```
 
-### Apply the changes 
+Expected module sources:
 
-Run the following command for applying changes with the proposed plan:
+- local `../..` for the ADB module
+- `terraform-oci-fk-vcn` for networking
+- `terraform-oci-fk-nsg` for NSG resources
 
-```
-martin_lin@codeeditor:lesson12_adb_with_ecpu_compute_model (eu-frankfurt-1)$ terraform apply
-module.oci-fk-adb.data.oci_core_services.AllOCIServices[0]: Reading...
-module.oci-fk-adb.data.oci_core_services.AllOCIServices[0]: Read complete after 0s [id=CoreServicesDataSource-0]
+### Apply
 
-Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
-  + create
-
-Terraform will perform the following actions:
-
-  # module.oci-fk-adb.oci_core_nat_gateway.fk_adb_natgw[0] will be created
-  + resource "oci_core_nat_gateway" "fk_adb_natgw" {
-      + block_traffic  = (known after apply)
-      + compartment_id = "ocid1.compartment.oc1..aaaaaaaaiyy4srmrb32v5rlniicwmpxsytywiucgbcp5ext6e4ahjfuloewa"
-      + defined_tags   = (known after apply)
-      + display_name   = "fk_adb_natgw"
-      + freeform_tags  = (known after apply)
-      + id             = (known after apply)
-      + nat_ip         = (known after apply)
-      + public_ip_id   = (known after apply)
-      + route_table_id = (known after apply)
-      + state          = (known after apply)
-      + time_created   = (known after apply)
-      + vcn_id         = (known after apply)
-    }
-
-(...)
-
-Plan: 11 to add, 0 to change, 0 to destroy.
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-  Enter a value: yes
-
-module.oci-fk-adb.random_password.wallet_password: Creating...
-module.oci-fk-adb.random_password.wallet_password: Creation complete after 0s [id=none]
-module.oci-fk-adb.oci_core_vcn.fk_adb_vcn[0]: Creating...
-module.oci-fk-adb.oci_core_vcn.fk_adb_vcn[0]: Creation complete after 0s [id=ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaadngk4giaak76a4mrugw77uydl3caqh4xbwetopo6snh4vmmnjifq]
-module.oci-fk-adb.oci_core_nat_gateway.fk_adb_natgw[0]: Creating...
-module.oci-fk-adb.oci_core_network_security_group.fk_adb_nsg[0]: Creating...
-module.oci-fk-adb.oci_core_service_gateway.fk_adb_sg[0]: Creating...
-module.oci-fk-adb.oci_core_network_security_group.fk_adb_nsg[0]: Creation complete after 1s [id=ocid1.networksecuritygroup.oc1.eu-frankfurt-1.aaaaaaaak6aax7qtie2axbxy3byrjj657rlocwzzxwk7yo5zfymm7awqunra]
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_egress_group_sec_rule[0]: Creating...
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_ingress_group_sec_rule[0]: Creating...
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_egress_group_sec_rule[0]: Creation complete after 0s [id=F58926]
-module.oci-fk-adb.oci_core_service_gateway.fk_adb_sg[0]: Creation complete after 1s [id=ocid1.servicegateway.oc1.eu-frankfurt-1.aaaaaaaa5ineold47kswhdfmosexpheifiqixqsm5emnujypaqrozunow2yq]
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_ingress_group_sec_rule[0]: Creation complete after 0s [id=8D6847]
-module.oci-fk-adb.oci_core_nat_gateway.fk_adb_natgw[0]: Creation complete after 2s [id=ocid1.natgateway.oc1.eu-frankfurt-1.aaaaaaaasqkk4o4zqoxbniatchcawkthx66twlzaj2at26u3gsta3zgmwkra]
-module.oci-fk-adb.oci_core_route_table.fk_adb_rt_via_natgw_and_sg[0]: Creating...
-module.oci-fk-adb.oci_core_route_table.fk_adb_rt_via_natgw_and_sg[0]: Creation complete after 0s [id=ocid1.routetable.oc1.eu-frankfurt-1.aaaaaaaaq56qlixpwxwxdj4tl5ycwk7kyc2pr6rd47dj7xro5lqwqg5zfozq]
-module.oci-fk-adb.oci_core_subnet.fk_adb_subnet[0]: Creating...
-module.oci-fk-adb.oci_core_subnet.fk_adb_subnet[0]: Creation complete after 2s [id=ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaag65izip52vdyyirngear2ldv3vjut6euiebi2adckm7driqfa3oa]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Creating...
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [10s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [20s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [30s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [40s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [50s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [1m0s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [1m10s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [1m20s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [1m30s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [1m40s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [1m50s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [2m0s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [2m10s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [2m20s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [2m30s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [2m40s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [2m50s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [3m0s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [3m10s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Still creating... [3m20s elapsed]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Creation complete after 3m28s [id=ocid1.autonomousdatabase.oc1.eu-frankfurt-1.antheljtdngk4giatol3tuonq74wvp4xnth2itmuymkulx3a6ms65kyjaqia]
-module.oci-fk-adb.oci_database_autonomous_database_wallet.fk_adb_database_wallet: Creating...
-module.oci-fk-adb.oci_database_autonomous_database_wallet.fk_adb_database_wallet: Creation complete after 2s [id=DatabaseAutonomousDatabaseWalletResource-1831233018]
-
-Apply complete! Resources: 11 added, 0 changed, 0 destroyed.
-
+```bash
+terraform apply
 ```
 
-### Destroy the changes 
+With the current defaults, this lesson creates:
 
-Run the following command for destroying all resources:
+- one Autonomous Database Serverless instance
+- one generated wallet password
+- one database wallet download resource
+- one VCN
+- one subnet
+- one route table
+- one NAT gateway
+- one service gateway
+- one NSG with ingress and egress rules
 
+## Key Configuration
+
+Current lesson settings:
+
+- `adb_database_db_name = "FoggyKitchenADB"`
+- `adb_database_display_name = "FoggyKitchenADB"`
+- `adb_database_db_workload = "OLTP"`
+- `adb_free_tier = false`
+- `adb_compute_model = "ECPU"`
+- `adb_compute_count = 2`
+- `adb_database_data_storage_size_in_tbs = 1`
+- `is_auto_scaling_enabled = true`
+- `is_auto_scaling_for_storage_enabled = true`
+- `use_existing_vcn = true`
+- `adb_private_endpoint = true`
+- `adb_subnet_id = module.fk_vcn.subnet_ids["adb_private"]`
+- `adb_nsg_id = module.fk_nsg.nsg_id`
+
+The important behavioral point is that this lesson keeps the explicit module composition used in the modernized private endpoint lessons, while showing the newer ECPU-based sizing path for Autonomous Database Serverless.
+
+## Outputs
+
+This lesson exposes the outputs from the root module, including:
+
+- database identifiers and connection URLs
+- wallet content
+- autoscaling-related database settings
+- VCN, subnet, and NSG details for the private endpoint path
+
+## Destroy
+
+To remove all resources created by this lesson:
+
+```bash
+terraform destroy
 ```
-martin_lin@codeeditor:lesson12_adb_with_ecpu_compute_model (eu-frankfurt-1)$ terraform destroy 
-module.oci-fk-adb.random_password.wallet_password: Refreshing state... [id=none]
-module.oci-fk-adb.data.oci_core_services.AllOCIServices[0]: Reading...
-module.oci-fk-adb.oci_core_vcn.fk_adb_vcn[0]: Refreshing state... [id=ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaadngk4giaak76a4mrugw77uydl3caqh4xbwetopo6snh4vmmnjifq]
-module.oci-fk-adb.data.oci_core_services.AllOCIServices[0]: Read complete after 0s [id=CoreServicesDataSource-0]
-module.oci-fk-adb.oci_core_network_security_group.fk_adb_nsg[0]: Refreshing state... [id=ocid1.networksecuritygroup.oc1.eu-frankfurt-1.aaaaaaaak6aax7qtie2axbxy3byrjj657rlocwzzxwk7yo5zfymm7awqunra]
-module.oci-fk-adb.oci_core_service_gateway.fk_adb_sg[0]: Refreshing state... [id=ocid1.servicegateway.oc1.eu-frankfurt-1.aaaaaaaa5ineold47kswhdfmosexpheifiqixqsm5emnujypaqrozunow2yq]
-module.oci-fk-adb.oci_core_nat_gateway.fk_adb_natgw[0]: Refreshing state... [id=ocid1.natgateway.oc1.eu-frankfurt-1.aaaaaaaasqkk4o4zqoxbniatchcawkthx66twlzaj2at26u3gsta3zgmwkra]
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_egress_group_sec_rule[0]: Refreshing state... [id=F58926]
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_ingress_group_sec_rule[0]: Refreshing state... [id=8D6847]
-module.oci-fk-adb.oci_core_route_table.fk_adb_rt_via_natgw_and_sg[0]: Refreshing state... [id=ocid1.routetable.oc1.eu-frankfurt-1.aaaaaaaaq56qlixpwxwxdj4tl5ycwk7kyc2pr6rd47dj7xro5lqwqg5zfozq]
-module.oci-fk-adb.oci_core_subnet.fk_adb_subnet[0]: Refreshing state... [id=ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaag65izip52vdyyirngear2ldv3vjut6euiebi2adckm7driqfa3oa]
-module.oci-fk-adb.oci_database_autonomous_database.fk_adb_database: Refreshing state... [id=ocid1.autonomousdatabase.oc1.eu-frankfurt-1.antheljtdngk4giatol3tuonq74wvp4xnth2itmuymkulx3a6ms65kyjaqia]
-module.oci-fk-adb.oci_database_autonomous_database_wallet.fk_adb_database_wallet: Refreshing state... [id=DatabaseAutonomousDatabaseWalletResource-1831233018]
 
-Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
-  - destroy
+## Contributing
 
-Terraform will perform the following actions:
+This project is open source. Contributions are welcome through pull requests.
 
-  # module.oci-fk-adb.oci_core_nat_gateway.fk_adb_natgw[0] will be destroyed
-  - resource "oci_core_nat_gateway" "fk_adb_natgw" {
-      - block_traffic  = false -> null
-      - compartment_id = "ocid1.compartment.oc1..aaaaaaaaiyy4srmrb32v5rlniicwmpxsytywiucgbcp5ext6e4ahjfuloewa" -> null
-      - defined_tags   = {} -> null
-      - display_name   = "fk_adb_natgw" -> null
-      - freeform_tags  = {} -> null
-      - id             = "ocid1.natgateway.oc1.eu-frankfurt-1.aaaaaaaasqkk4o4zqoxbniatchcawkthx66twlzaj2at26u3gsta3zgmwkra" -> null
-      - nat_ip         = "141.147.45.193" -> null
-      - public_ip_id   = "ocid1.publicip.oc1.eu-frankfurt-1.aaaaaaaaeptr7efqvm6n2fcurqceiau7ldpouvyhcju42h7ltpgffkaueyla" -> null
-      - state          = "AVAILABLE" -> null
-      - time_created   = "2024-04-02 13:51:00.075 +0000 UTC" -> null
-      - vcn_id         = "ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaadngk4giaak76a4mrugw77uydl3caqh4xbwetopo6snh4vmmnjifq" -> null
-    }
+## License
 
-(...)
+Licensed under the **Universal Permissive License (UPL), Version 1.0**.
+See [LICENSE](../../LICENSE) for details.
 
-Plan: 0 to add, 0 to change, 11 to destroy.
+---
 
-Do you really want to destroy all resources?
-  Terraform will destroy all your managed infrastructure, as shown above.
-  There is no undo. Only 'yes' will be accepted to confirm.
-
-  Enter a value: yes
-
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_egress_group_sec_rule[0]: Destroying... [id=F58926]
-module.oci-fk-adb.oci_core_network_security_group_security_rule.fk_adb_nsg_ingress_group_sec_rule[0]: Destroying... [id=8D6847]
-module.oci-fk-adb.oci_database_autonomous_database_wallet.fk_adb_database_wallet: Destroying... [id=DatabaseAutonomousDatabaseWalletResource-1831233018]
-module.oci-fk-adb.oci_database_autonomous_database_wallet.fk_adb_database_wallet: Destruction complete after 0s
-
-(...)
-
-module.oci-fk-adb.oci_core_network_security_group.fk_adb_nsg[0]: Destroying... [id=ocid1.networksecuritygroup.oc1.eu-frankfurt-1.aaaaaaaak6aax7qtie2axbxy3byrjj657rlocwzzxwk7yo5zfymm7awqunra]
-module.oci-fk-adb.oci_core_network_security_group.fk_adb_nsg[0]: Destruction complete after 0s
-module.oci-fk-adb.oci_core_vcn.fk_adb_vcn[0]: Destroying... [id=ocid1.vcn.oc1.eu-frankfurt-1.amaaaaaadngk4giaak76a4mrugw77uydl3caqh4xbwetopo6snh4vmmnjifq]
-module.oci-fk-adb.oci_core_vcn.fk_adb_vcn[0]: Destruction complete after 1s
-
-Destroy complete! Resources: 11 destroyed.
-```
+© 2026 [FoggyKitchen.com](https://foggykitchen.com) - Cloud. Code. Clarity.

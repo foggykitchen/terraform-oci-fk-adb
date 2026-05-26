@@ -1,105 +1,181 @@
 # terraform-oci-fk-adb
 
-These is Terraform module that deploys [Autonmous Database Serverless](https://docs.oracle.com/en/cloud/paas/autonomous-database/serverless/) on [Oracle Cloud Infrastructure (OCI)](https://cloud.oracle.com/en_US/cloud-infrastructure).
+This repository contains a reusable **Terraform / OpenTofu module** and progressive training examples for deploying **Oracle Autonomous Database Serverless (ADB-S)** on **Oracle Cloud Infrastructure (OCI)**.
 
-## About
-Oracle Autonomous Database Serverless is a comprehensive, fully managed database solution designed to simplify the development and deployment of applications for organizations of any size and complexity. It stands out as the sole cloud database service capable of catering to a wide spectrum of requirements, from straightforward self-service analytics to intricate, high-volume data management applications. This versatile platform seamlessly accommodates various types of workloads, including Data Warehousing, Transaction Processing, JSON-centric applications, and development through Oracle APEX's Low Code platform, ensuring a broad range of use cases can be efficiently addressed.
+It is part of the [FoggyKitchen.com](https://foggykitchen.com) training ecosystem and is designed as a composable ADB layer that can be combined with networking, Vault, disaster recovery, cloning, and backup scenarios.
 
-## Prerequisites
-1. Download and install Terraform (v1.0 or later)
-2. Download and install the OCI Terraform Provider (v4.4.0 or later)
-3. Export OCI credentials. (this refer to the https://github.com/oracle/terraform-provider-oci )
+---
 
+## Purpose
 
-## What's a Module?
-A Module is a canonical, reusable, best-practices definition for how to run a single piece of infrastructure, such as a database or server cluster. Each Module is created using Terraform, and includes automated tests, examples, and documentation. It is maintained both by the open source community and companies that provide commercial support.
-Instead of figuring out the details of how to run a piece of infrastructure from scratch, you can reuse existing code that has been proven in production. And instead of maintaining all that infrastructure code yourself, you can leverage the work of the Module community to pick up infrastructure improvements through a version number bump.
+The goal of this module is to provide a clear, reusable reference implementation for Autonomous Database Serverless:
 
-## How to use this Module
-Each Module has the following folder structure:
-* [root](): This folder contains a root module.
-* [training](): This folder contains self-study training how to use the module:
-  - [Lesson 1: Creating Free Tier Autonomous DB Serverless](training/lesson1_free_tier_adb): This lesson guides you through the process of creating an Autonomous Database (ADB) Serverless on Oracle's Free Tier, offering a practical start for users seeking cost-effective solutions without compromising on capabilities.  
-  - [Lesson 2: Creating Free Tier Autonomous DB Serverless with IP Whitelisting](training/lesson2_free_tier_adb_with_ip_whitelisting): In this lesson, we'll set up a Free Tier Autonomous Database and implement IP whitelisting, including our public IP address. This approach will restrict access to the publicly available database exclusively to our laptop.
-  - [Lesson 3: Creating Autonomous DB Serverless with Private Endpoint](training/lesson3_adb_with_private_endpoint): In this lesson, we explore the intricacies of setting up an Oracle Autonomous Database (ADB) with a private endpoint, focusing on enhancing security and network isolation. This lesson provides step-by-step instructions on configuring your ADB instance in Oracle Cloud Infrastructure (OCI) to use private endpoints, ensuring secure, internal access to your database without exposure to the public internet. 
-  - [Lesson 4: Creating Autonomous DB Serverless with Local Disaster Recovery](training/lesson4_adb_with_local_disaster_recovery): In this lesson, we'll delve into the creation of an Oracle Autonomous Database (ADB) with a focus on incorporating local disaster recovery, ensuring your data remains secure and accessible, even during local infrastructure failures.  
-  - [Lesson 5: Creating Autonomous DB Serverless with Local Data Guard](training/lesson5_adb_with_local_data_guard): In this lesson, we'll delve into the creation of an Oracle Autonomous Database (ADB) with a focus on incorporating local Data Guard, ensuring your data remains secure and accessible, even during local infrastructure failures. 
-  - [Lesson 6: Creating Autonomous DB Serverless with Manual Backup](training/lesson6_adb_with_manual_backup): In this lesson, we'll focus on configuring an Autonomous Database (ADB) with manual backup capabilities.
-  - [Lesson 7: Creating Autonomous DB Serverless integrated with OCI Vault](training/lesson7_adb_with_oci_vault): This lesson delves into the intricacies of setting up an Autonomous Database Shared instance, emphasizing the integration with OCI Vault for top-tier security alignment with organizational policies. It meticulously covers how to configure OCI Vault to serve as a repository for customer-managed encryption keys, a critical step for organizations that mandate direct control over their encryption mechanisms. The lesson clarifies the process whereby the Autonomous Database employs the customer-managed master encryption key stored in OCI Vault to generate the Transparent Data Encryption (TDE) master key, ensuring data is encrypted under the organization's governance.
-  - [Lesson 8: Creating Autonomous DB Serverless with Full Clone](training/lesson8_adb_with_clone): This lesson focuses on the process of creating an Autonomous Database Shared instance by leveraging the cloning feature, an essential technique for database management and scalability. It outlines the steps to efficiently clone an existing database, allowing for the quick deployment of test environments or the replication of data for analytical purposes. Through hands-on exercises, participants will learn to utilize the cloning capabilities to enhance their database infrastructure, ensuring seamless data management and operational continuity in Oracle Cloud Infrastructure.
-  - [Lesson 9: Creating Autonomous DB Serverless with Refreshable Clone](training/lesson9_adb_with_refreshable_clone): This lesson introduces the advanced concept of creating a refreshable clone in an Autonomous Database Shared environment, emphasizing the critical role of such clones in maintaining data currency and supporting development efforts with minimal downtime. This module guides learners through the process of setting up a refreshable clone, which allows for the periodic synchronization of data from the source database, ensuring that the clone remains up-to-date with the latest changes. 
-  - [Lesson 10: Creating Autonomous DB Serverless with Remote Standby (Disaster Recovery)](training/lesson10_adb_with_remote_disaster_recovery): This lesson explores the essential techniques for setting up an Autonomous Database (ADB) with shared resources, focusing on the implementation of a remote standby database for disaster recovery without utilizing DataGuard technology. 
-  - [Lesson 11: Creating Autonomous DB Serverless with Remote Standby (DataGuard-based)](training/lesson11_adb_with_remote_data_guard): This lesson explores the essential techniques for setting up an Autonomous Database (ADB) with shared resources, focusing on the implementation of a remote standby database for disaster recovery utilizing DataGuard technology.  
-  - [Lesson 12: Creating Autonomous DB Serverless with ECPU Compute Model](training/lesson12_adb_with_ecpu_compute_model): In this lesson we delve into the realm of database management, focusing on the creation of Autonomous Database (ADB) Serverless instances using the ECPU (Elastic Compute Processing Unit) Compute Model. Throughout the lesson, participants will gain a comprehensive understanding of the ECPU Compute Model, its advantages, and its suitability for various database workloads. We explore the intricacies of configuring and deploying Autonomous Database instances in a serverless environment, emphasizing the flexibility, scalability, and cost-effectiveness it offers. 
-    
-To deploy ADB using this Module with minimal effort use this:
+- Autonomous Database Serverless provisioning
+- Free Tier and paid deployment paths
+- Public endpoint deployments with IP allowlists
+- Private endpoint deployments with optional module-managed networking
+- Optional manual backup creation
+- Optional OCI Vault integration for customer-managed encryption keys
+- Clone and refreshable clone scenarios
+- Local and remote disaster recovery scenarios
+- OCPU and ECPU compute model support
 
-```hcl
-module "fk-adb" {
-  source                                = "github.com/mlinxfeld/terraform-oci-fk-adb"
-  adb_database_db_name                  = "FoggyKitchenADB"
-  adb_database_display_name             = "FoggyKitchenADB"
-  adb_password                          = var.adb_password
-  compartment_ocid                      = var.compartment_ocid
-  use_existing_vcn                      = false
-  adb_private_endpoint                  = false
-}
+This is not a full landing zone module. Networking, encryption, and recovery settings stay explicit so the module can be reused in different training and project scenarios.
 
+---
+
+## What the module does
+
+Depending on the configuration, the module can create:
+
+- Autonomous Database Serverless
+- Database wallet
+- Optional manual backup
+- Optional VCN for private endpoint deployments
+- Optional service gateway, NAT gateway, route table, subnet, and NSG for private endpoint deployments
+
+The module intentionally does not create:
+
+- Bastion hosts
+- OCI Vault resources themselves
+- Application schemas or data model objects
+- Data migration workflows
+- Cross-module IAM or policy scaffolding
+
+Those concerns belong in dedicated modules or lesson-specific examples.
+
+---
+
+## Repository Structure
+
+```bash
+terraform-oci-fk-adb/
+├── README.md
+├── LICENSE
+├── provider.tf
+├── datasources.tf
+├── network.tf
+├── adb.tf
+├── outputs.tf
+├── variables.tf
+└── training/
+    ├── README.md
+    ├── lesson1_free_tier_adb/
+    ├── lesson2_free_tier_adb_with_ip_whitelisting/
+    ├── lesson3_adb_with_private_endpoint/
+    ├── lesson4_adb_with_local_disaster_recovery/
+    ├── lesson5_adb_with_local_data_guard/
+    ├── lesson6_adb_with_manual_backup/
+    ├── lesson7_adb_with_oci_vault/
+    ├── lesson8_adb_with_clone/
+    ├── lesson9_adb_with_refreshable_clone/
+    ├── lesson10_adb_with_remote_disaster_recovery/
+    ├── lesson11_adb_with_remote_data_guard/
+    └── lesson12_adb_with_ecpu_compute_model/
 ```
 
-Argument | Description
---- | ---
-compartment_ocid | Compartment's OCID where OKE will be created.
-adb_password | ADB Password for ADMIN user.
-use_existing_vcn | Choose whether to leverage an existing VCN or to allow the module to create one internally (default is set to true).
-vcn_cidr | Specifies the CIDR block for the Virtual Cloud Network (VCN) when setting up a Private Endpoint scenario and when the module is responsible for creating the VCN.
-adb_subnet_cidr | Specifies the CIDR block for Subnet when setting up a Private Endpoint scenario and when the module is responsible for creating the VCN.
-adb_subnet_id | Used to identify the Subnet's Oracle Cloud Identifier (OCID) in scenarios where a Private Endpoint is being established and the Subnet was previously created outside of the module.
-adb_free_tier | Configuration option that determines whether the Serverless Autonomous Database should operate under the Free Tier. This flag can be set to true or false, with the default setting being false.
-adb_private_endpoint | Flag that controls the connectivity option for the Autonomous Database Serverless, allowing you to choose between a publicly accessible configuration or a private connection through a VCN & Subnet using a private endpoint. The default value for this setting is true, indicating a preference for private connectivity.
-adb_database_cpu_core_count | Allows you to specify the number of CPU cores to allocate to your Serverless Autonomous Database instance, enabling you to tailor the computing resources to meet the demands of your application.
-adb_database_data_storage_size_in_tbs | Enables you to set the amount of storage, in terabytes (TBs), that will be allocated to your Serverless Autonomous Database instance, allowing for customization based on data storage requirements.
-adb_database_db_name | specifies the database name (DBNAME) for your Autonomous Database Serverless instance, serving as a unique identifier for your database within the Oracle Cloud Infrastructure.
-adb_database_db_version | Oracle Database version for the Serverless Autonomous Database instance, with the default version being 19c. This parameter allows for compatibility and feature-specific configurations based on the database version selected.
-adb_database_db_workload | Determines the type of database workload for the Autonomous Database Serverless instance, with the default setting configured for Online Transaction Processing (OLTP). This parameter helps optimize the database configuration to match the intended workload, enhancing performance and efficiency.
-adb_data_safe_status | specifies the registration status of the Serverless Autonomous Database instance with Oracle Data Safe, with the default value being NOT_REGISTERED. This setting is crucial for managing the integration and security features provided by Data Safe for your database.
-adb_database_defined_tags_value | Refers to the specific tags you assign to your Serverless Autonomous Database instance for organizational, tracking, or governance purposes. Defined tags allow for more structured metadata compared to free-form tags, facilitating better resource management and categorization.
-adb_database_display_name | The parameter used to set a user-friendly display name for your Serverless Autonomous Database instance, helping to easily identify and distinguish it among other resources in your Oracle Cloud Infrastructure environment.
-adb_database_freeform_tags | enables you to apply unstructured, user-defined tags to your Serverless Autonomous Database instance, offering a flexible way to label and identify resources based on custom criteria, organizational needs, or operational requirements.
-adb_database_license_model | determines the licensing model for the Serverless Autonomous Database, allowing you to choose between LICENSE_INCLUDED, where Oracle provides the database license, and BYOL (Bring Your Own License), if you prefer to use an existing Oracle database license. The default setting is LICENSE_INCLUDED, facilitating a more straightforward setup by including the necessary licensing.
-adb_tde_wallet_zip_file | Specifies the name of the zip file containing the Transparent Data Encryption (TDE) wallet for the Serverless Autonomous Database. This wallet file is essential for encryption and security, enabling secure access to your database instance.
-adb_private_endpoint_label | sets the label for the Private Endpoint of the Serverless Autonomous Database, which is used within DNS configurations. This label facilitates the creation of a recognizable and manageable DNS name for connecting to your database through a private network.
-whitelisted_ips | specifies the IP addresses or Virtual Cloud Network (VCN) resources that are permitted to access the Serverless Autonomous Database when it is configured to be accessible over a public network. This setting ensures enhanced security by restricting database access to only trusted and specified sources.
-is_auto_scaling_enabled | Configuration flag that determines whether auto-scaling should be activated for the Serverless Autonomous Database, with the default setting being false. When enabled, this feature automatically adjusts the database's compute and storage resources based on workload demands, enhancing performance and cost efficiency.
-is_auto_scaling_for_storage_enabled | Indicates if auto scaling is enabled for the Autonomous Database storage. 
-is_local_data_guard_enabled | Configuration flag used to enable or disable Autonomous Data Guard for local disaster recovery scenarios in the context of a Serverless Autonomous Database. By default, this feature is set to false, indicating that Data Guard is not activated unless explicitly enabled, providing an additional layer of data protection and high availability.
-adb_wallet_password_specials | Flag that determines whether special characters should be included in the randomly generated password for the wallet of the Serverless Autonomous Database instance, with the default setting being true. This enhances the security of the wallet by ensuring the password is complex and harder to guess.
-adb_wallet_password_length | Specifies the number of characters for the password of the Serverless Autonomous Database instance's wallet, allowing you to define the complexity and security level of the password according to your security policies and requirements.
-adb_wallet_password_min_numeric | Sets the minimum number of numeric characters required in the wallet password for the Serverless Autonomous Database instance, ensuring the password meets specific security standards by including a defined quantity of numerical digits.
-adb_wallet_password_override_special | Allows for specifying particular special characters that should be used or prioritized in the password for the Serverless Autonomous Database instance's wallet. This setting enables more granular control over the password's composition, allowing for customization according to specific security policies or preferences.
-defined_tags | Refers to the structured key-value pairs assigned to an Autonomous Database Serverless instance for the purpose of organization, management, and cost tracking. These tags facilitate sophisticated governance and categorization strategies, enabling precise resource identification and allocation within Oracle Cloud Infrastructure environments.
-adb_backup_enabled | Configuration flag used to determine whether manual backups should be enabled for the Serverless Autonomous Database instance. By default, this feature is set to false, indicating that manual backups are not activated unless this setting is explicitly changed, providing flexibility in managing data protection strategies.
-adb_backup_display_name | Allows you to define a user-friendly name for manual backup of the Serverless Autonomous Database instance, facilitating easy identification and management of backup within the Oracle Cloud Infrastructure environment. This name is used primarily for display and organizational purposes.
-adb_backup_is_long_term_backup | Configuration setting that determines whether a manual backup of the Serverless Autonomous Database instance should be classified as a long-term backup. By default, this setting is true, indicating that backups are intended for long-term storage, which is essential for compliance with data retention policies or for ensuring data durability over extended periods.
-adb_backup_retention_period_in_days | specifies the duration, in days, for which a manual backup of the Serverless Autonomous Database instance will be retained. The default setting is 90 days, offering a balance between availability for recovery purposes and efficient resource utilization by automatically expiring older backups beyond this period.
-use_oci_vault | Configuration flag that determines whether the Oracle Cloud Infrastructure (OCI) Vault should be used to encrypt the Transparent Data Encryption (TDE) wallet for the Serverless Autonomous Database. By default, this is set to false, indicating that Oracle-managed keys will be used for encryption in lieu of customer-managed keys in the OCI Vault, streamlining the setup for users who prefer a more managed approach.
-vault_id | required when opting for customer-managed keys in Oracle Cloud Infrastructure (OCI) Vault for encrypting the Serverless Autonomous Database's TDE wallet. In this scenario, you must supply the Oracle Cloud Identifier (OCID) of the specific vault instance you wish to use for managing the encryption keys, ensuring a customized and secure encryption setup tailored to your security policies.
-kms_key_id | Necessary when you choose customer-managed encryption for the Transparent Data Encryption (TDE) of your Serverless Autonomous Database. For this encryption method, you are required to provide the Oracle Cloud Identifier (OCID) of the master encryption key, which is stored within the Oracle Cloud Infrastructure (OCI) Vault. This key is used to secure the database's data, aligning with your organization's encryption and security standards.
-source_type | specifies the origin or method used for creating a new Serverless Autonomous Database instance. The options include: (1) NONE for initiating a brand-new database instance without any pre-existing data, (2) DATABASE for creating a clone of an existing database, (3) CLONE_TO_REFRESHABLE for establishing a refreshable clone that can be updated periodically with changes from the source database, (4) BACKUP_FROM_ID for restoring a database from a specific backup identified by its ID, (5) BACKUP_FROM_TIMESTAMP for performing a point-in-time recovery of a database up to a specified timestamp, using available backups, (6) CROSS_REGION_DATAGUARD for setting up a remote (cross-regional) standby database configuration using Autonomous Data Guard, enhancing disaster recovery capabilities. Each source_type option tailors the database creation process to different use cases, ranging from fresh deployments to complex disaster recovery setups.
-source_id | Optional parameter where you can specify the Oracle Cloud Identifier (OCID) of an existing Serverless Autonomous Database instance. This ID is used when the creation process involves cloning, refreshing from an existing database, or setting up a Data Guard relationship, essentially linking the new instance to an existing database source.
-clone_type | allows you to specify the nature of the clone when source_type is set to DATABASE for creating a new Serverless Autonomous Database instance. You can choose between: (1) FULL for a complete clone, which includes all data, schema, and metadata from the source database, (2) METADATA for cloning only the schema and metadata, excluding the actual data. This option enables precise control over the cloning process, depending on whether you need a complete duplicate of the original database or just its structural framework.
-refreshable_mode | configuration setting used when source_type is CLONE_TO_REFRESHABLE, allowing you to define the refresh behavior for a refreshable clone of a Serverless Autonomous Database. The options are: (1) AUTOMATIC for enabling the clone to be automatically updated with changes from the source database at regular intervals, (2) MANUAL for requiring manual initiation of the refresh process, giving you control over when the clone is updated. This setting helps manage how and when your refreshable clone stays synchronized with its source, catering to different operational needs and strategies.
-remote_disaster_recovery_type | configuration option applicable when source_type is CROSS_REGION_DATAGUARD, enabling you to specify the disaster recovery strategy for the standby database in a Serverless Autonomous Database setup. The available choices are: (1) BACKUP_BASED for a cost-effective disaster recovery solution that relies on backups. This option is suitable for scenarios where budget constraints are a priority, and recovery time objectives (RTO) can be more flexible. (2) ADG for an Autonomous Data Guard scenario, providing real-time data replication and fast failover capabilities, ideal for critical applications requiring high availability and minimal data loss, (3)SNAPSHOT_STANDBY for creating a snapshot standby database from the standby. This option allows the standby database to be used for read-only operations, testing, or other non-production purposes, while still maintaining the ability to quickly revert to a standby role if needed. Each option offers different levels of protection, cost, and operational flexibility, allowing you to tailor the disaster recovery approach to your specific requirements and objectives.
-autonomous_database_backup_id | If the source is BACKUP_FROM_ID, you can provide the OCID of the autonomous database backup here.
-adb_compute_model | The compute model of the Autonomous Database (OCPU vs ECPU). 
-adb_compute_count | The compute amount available to the database. Minimum 2 when adb_compute_model equals to ECPU. 
+Each lesson folder is runnable on its own and focuses on a narrower ADB scenario built on the same module foundation.
 
-## Contributing
-This project is open source. Please submit your contributions by forking this repository and submitting a pull request! [FoggyKitchen.com](https://foggykitchen.com/) appreciates any contributions that are made by the open source community.
+---
+
+## Example Usage
+
+```hcl
+module "adb" {
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-adb.git"
+
+  compartment_ocid                = var.compartment_ocid
+  adb_password                    = var.adb_password
+  adb_database_db_name            = "fkadb"
+  adb_database_display_name       = "FoggyKitchenADB"
+  adb_database_db_workload        = "OLTP"
+  adb_compute_model               = "ECPU"
+  adb_compute_count               = 2
+  adb_database_data_storage_size_in_tbs = 1
+
+  adb_private_endpoint            = true
+  use_existing_vcn                = false
+  vcn_cidr                        = "10.0.0.0/16"
+  adb_subnet_cidr                 = "10.0.1.0/24"
+
+  is_auto_scaling_enabled         = true
+  is_auto_scaling_for_storage_enabled = true
+  adb_backup_enabled              = false
+}
+```
+
+---
+
+## Inputs
+
+Key inputs exposed by the module:
+
+- `compartment_ocid`: compartment where ADB resources are created
+- `adb_password`: administrator password for the database
+- `adb_database_db_name`: database name
+- `adb_database_display_name`: display name
+- `adb_database_db_workload`: workload type such as `OLTP` or `DW`
+- `adb_compute_model`: `ECPU` or legacy `OCPU`
+- `adb_compute_count`: compute amount for `ECPU`
+- `adb_database_cpu_core_count`: CPU core count for non-`ECPU` mode
+- `adb_database_data_storage_size_in_tbs`: allocated storage
+- `adb_free_tier`: deploy Free Tier shape when supported
+- `adb_private_endpoint`: enable private endpoint deployment
+- `use_existing_vcn`: reuse existing subnet/NSG instead of creating network resources
+- `vcn_id`: existing VCN OCID for private endpoint mode
+- `adb_subnet_id`: existing subnet OCID for private endpoint mode
+- `adb_nsg_id`: existing NSG OCID for private endpoint mode
+- `whitelisted_ips`: public access allowlist when private endpoint is disabled
+- `adb_backup_enabled`: create a manual backup after database provisioning
+- `use_oci_vault`: enable customer-managed encryption key integration
+- `source_type`: source mode for clone or disaster recovery scenarios
+
+The full variable contract is defined in [variables.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/variables.tf).
+
+---
+
+## Outputs
+
+The module exports:
+
+- `adb_database`: database ID, connection URLs, wallet content, NSG ID, and private endpoint IP
+- `adb_database_backup`: backup identifiers when manual backup creation is enabled
+- `adb_database_network`: VCN, subnet, and NSG IDs when the module creates private endpoint networking
+
+The exact output contract is defined in [outputs.tf](/Users/mlinxfeld/codes/github/terraform-oci-fk-adb/outputs.tf).
+
+---
+
+## Design Principles
+
+- The root module stays reusable instead of becoming a full database platform wrapper
+- Network, encryption, and recovery concerns stay explicit
+- Training lessons build on one another, but each lesson remains runnable on its own
+- Outputs are treated as first-class values for downstream lessons and examples
+
+---
+
+## Notes
+
+- Private endpoint networking is created only when `adb_private_endpoint = true` and `use_existing_vcn = false`.
+- OCI Vault integration assumes the Vault and KMS key already exist.
+- The current root module still manages private endpoint networking with raw OCI resources.
+- The current repository owner and module source remain `mlinxfeld`; that can be aligned later if the repo is transferred.
+
+---
+
+## Related Resources
+
+- [Training examples](training)
+- [FoggyKitchen.com](https://foggykitchen.com/)
+
+---
 
 ## License
-Copyright (c) 2024 [FoggyKitchen.com](https://foggykitchen.com/)
 
-Licensed under the Universal Permissive License (UPL), Version 1.0.
+Licensed under the **Universal Permissive License (UPL), Version 1.0**.
+See [LICENSE](LICENSE) for details.
 
-See [LICENSE](LICENSE) for more details.
+---
+
+© 2026 [FoggyKitchen.com](https://foggykitchen.com) - Cloud. Code. Clarity.

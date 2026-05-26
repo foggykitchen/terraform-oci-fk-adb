@@ -1,6 +1,6 @@
-title: "FoggyKitchen Autonomous Database Serverless with Terraform - LESSON 12 - Creating Autonomous DB Serverless with ECPU Compute Model."
-description: "In this lesson we delve into the realm of database management, focusing on the creation of Autonomous Database (ADB) Serverless instances using the ECPU (Elastic Compute Processing Unit) Compute Model."
-stackDescription: "In this lesson we delve into the realm of database management, focusing on the creation of Autonomous Database (ADB) Serverless instances using the ECPU (Elastic Compute Processing Unit) Compute Model."
+title: "FoggyKitchen Autonomous Database Serverless with Terraform - LESSON 12 - Creating Autonomous DB Serverless with the ECPU Compute Model."
+description: "This lesson explores Autonomous Database Serverless using the ECPU compute model, private endpoint networking, and autoscaling options."
+stackDescription: "This lesson explores Autonomous Database Serverless using the ECPU compute model, private endpoint networking, and autoscaling options."
 schemaVersion: 1.1.0
 version: "20201028"
 locale: "en"
@@ -13,7 +13,7 @@ variableGroups:
   - region
 
 - title: "Required Configuration"
-  visible: true  
+  visible: true
   variables:
   - compartment_ocid
   - adb_password
@@ -30,7 +30,7 @@ variables:
 
   region:
     title: "Region"
-    description: "Choose Region for your OCI Autonomous Database Serverless"
+    description: "Choose region for your OCI Autonomous Database Serverless deployment"
     type: oci:identity:region:name
     required: true
     visibile: true
@@ -41,15 +41,13 @@ variables:
     type: password
     minLength: 12
     maxLength: 30
-    pattern: ^[A-Za-z][A-Za-z0-9_#\$]+$     
+    pattern: ^[A-Za-z][A-Za-z0-9_#\$]+$
     required: true
     visibile: true
 
   compartment_ocid:
     title: "Compartment"
-    description: "Choose Comparment for OCI Autonomous Database Serverless"
+    description: "Choose compartment for OCI Autonomous Database Serverless"
     type: oci:identity:compartment:id
     required: true
-    visibile: true 
-
-  
+    visibile: true

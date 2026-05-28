@@ -34,6 +34,13 @@ resource "oci_database_autonomous_database" "fk_adb_database" {
   autonomous_database_backup_id       = var.autonomous_database_backup_id
   compute_model                       = var.adb_compute_model
   compute_count                       = var.adb_compute_model == "ECPU" ? var.adb_compute_count : null       
+
+  # OCI Always Free ECPU databases may be created only with a higher requested
+  # compute_count, but then report an effective count of 1 on refresh. Ignore
+  # this provider drift so retrying apply after partial failures remains possible.
+  lifecycle {
+    ignore_changes = [compute_count]
+  }
 }
 
 resource "random_password" "wallet_password" {

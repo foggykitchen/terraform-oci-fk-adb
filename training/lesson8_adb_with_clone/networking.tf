@@ -41,7 +41,7 @@ module "fk_vcn" {
 }
 
 module "fk_nsg" {
-  source = "github.com/foggykitchen/terraform-oci-fk-nsg"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-nsg.git?ref=v0.1.0"
 
   name             = "FoggyKitchenADBNSG"
   compartment_ocid = var.compartment_ocid

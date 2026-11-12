@@ -10,5 +10,5 @@ module "oci-fk-adb" {
   compartment_ocid                      = var.compartment_ocid
   use_existing_vcn                      = false
   adb_private_endpoint                  = false
-  whitelisted_ips                       = [var.my_public_ip]
+  whitelisted_ips                       = compact([var.my_public_ip, var.mobile_public_ip, var.fn_vcn_ocid, var.fn_public_egress_ip])
 }

@@ -111,7 +111,7 @@ module "drg_primary" {
 }
 
 module "nsg_primary" {
-  source = "github.com/foggykitchen/terraform-oci-fk-nsg"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-nsg.git?ref=v0.1.0"
 
   providers = {
     oci = oci.primary
@@ -284,7 +284,7 @@ module "drg_standby" {
 }
 
 module "nsg_standby" {
-  source = "github.com/foggykitchen/terraform-oci-fk-nsg"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-nsg.git?ref=v0.1.0"
 
   providers = {
     oci = oci.standby

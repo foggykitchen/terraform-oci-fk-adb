@@ -16,6 +16,7 @@ module "oci-fk-adb-source" {
 
 module "oci-fk-adb-refreshable-clone" {
   count                                 = var.adb_refreshable_clone_enabled ? 1 : 0
+  adb_password                          = var.adb_password
   source                                = "../.."
   adb_database_db_name                  = "FoggyKitchenADBRefClone"
   adb_database_display_name             = "FoggyKitchenADB_RefreshableClone"

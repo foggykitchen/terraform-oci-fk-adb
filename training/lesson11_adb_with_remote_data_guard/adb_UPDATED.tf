@@ -21,6 +21,7 @@ module "oci-fk-adb-remote-standby" {
   providers = {
     oci = oci.standby
   }
+  adb_password                          = var.adb_password
   source                                = "../.."
   adb_database_db_name                  = "FoggyKitchenADB"
   adb_database_display_name             = "FoggyKitchenADB_Standby"

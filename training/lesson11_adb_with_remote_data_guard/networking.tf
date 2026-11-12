@@ -1,5 +1,5 @@
 module "vcn_primary" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-vcn.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-vcn.git?ref=v0.3.0" # TODO: tag not yet released
 
   providers = {
     oci = oci.primary
@@ -57,7 +57,7 @@ module "vcn_primary" {
 }
 
 module "drg_primary" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-drg.git?ref=v0.4.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-drg.git?ref=v0.5.0" # TODO: tag not yet released
 
   providers = {
     oci = oci.primary
@@ -111,7 +111,7 @@ module "drg_primary" {
 }
 
 module "nsg_primary" {
-  source = "github.com/foggykitchen/terraform-oci-fk-nsg"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-nsg.git?ref=v0.2.0" # TODO: tag not yet released
 
   providers = {
     oci = oci.primary
@@ -170,7 +170,7 @@ module "nsg_primary" {
 }
 
 module "vcn_standby" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-vcn.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-vcn.git?ref=v0.3.0" # TODO: tag not yet released
 
   providers = {
     oci = oci.standby
@@ -228,7 +228,7 @@ module "vcn_standby" {
 }
 
 module "drg_standby" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-drg.git?ref=v0.4.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-drg.git?ref=v0.5.0" # TODO: tag not yet released
 
   providers = {
     oci = oci.standby
@@ -284,7 +284,7 @@ module "drg_standby" {
 }
 
 module "nsg_standby" {
-  source = "github.com/foggykitchen/terraform-oci-fk-nsg"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-nsg.git?ref=v0.2.0" # TODO: tag not yet released
 
   providers = {
     oci = oci.standby

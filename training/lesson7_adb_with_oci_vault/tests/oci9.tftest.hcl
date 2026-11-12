@@ -1,0 +1,132 @@
+# Synthetic fixtures only. Every run is plan-only; no tenancy credentials are used.
+mock_provider "oci" {
+  mock_data "oci_core_services" {
+    defaults = { "id" = "MOCK_OCID_SERVICES", "services" = [{ "cidr_block" = "all-fra-services-in-oracle-services-network", "description" = "mock-value", "id" = "mock-service", "name" = "All FRA Services In Oracle Services Network" }] }
+  }
+  mock_data "oci_identity_region_subscriptions" {
+    defaults = { "id" = "MOCK_OCID_SUBSCRIPTIONS", "region_subscriptions" = [{ "is_home_region" = true, "region_key" = "FRA", "region_name" = "eu-frankfurt-1", "state" = "AVAILABLE", "tenancy_id" = "MOCK_OCID_MOCK", "status" = "READY" }] }
+  }
+  mock_data "oci_identity_regions" {
+    defaults = { "id" = "MOCK_OCID_REGIONS", "regions" = [{ "key" = "FRA", "name" = "eu-frankfurt-1" }, { "key" = "AMS", "name" = "eu-amsterdam-1" }] }
+  }
+  mock_resource "oci_core_dhcp_options" {
+    defaults = { "id" = "MOCK_OCID_OPTIONS", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_internet_gateway" {
+    defaults = { "id" = "MOCK_OCID_GATEWAY", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_nat_gateway" {
+    defaults = { "id" = "MOCK_OCID_GATEWAY", "nat_ip" = "mock-value", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_network_security_group" {
+    defaults = { "id" = "MOCK_OCID_GROUP", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_network_security_group_security_rule" {
+    defaults = { "id" = "MOCK_OCID_RULE", "is_valid" = false, "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_route_table" {
+    defaults = { "id" = "MOCK_OCID_TABLE", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_security_list" {
+    defaults = { "id" = "MOCK_OCID_LIST", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_service_gateway" {
+    defaults = { "block_traffic" = false, "id" = "MOCK_OCID_GATEWAY", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_subnet" {
+    defaults = { "id" = "MOCK_OCID_SUBNET", "ipv6virtual_router_ip" = "mock-value", "state" = "AVAILABLE", "subnet_domain_name" = "mock-value", "time_created" = "mock-value", "virtual_router_ip" = "mock-value", "virtual_router_mac" = "mock-value" }
+  }
+  mock_resource "oci_core_vcn" {
+    defaults = { "byoipv6cidr_blocks" = ["mock-value"], "default_dhcp_options_id" = "MOCK_OCID_MOCK", "default_route_table_id" = "MOCK_OCID_MOCK", "default_security_list_id" = "MOCK_OCID_MOCK", "id" = "MOCK_OCID_VCN", "ipv6cidr_blocks" = ["mock-value"], "state" = "AVAILABLE", "time_created" = "mock-value", "vcn_domain_name" = "mock-value" }
+  }
+  mock_resource "oci_database_autonomous_database" {
+    defaults = { "actual_used_data_storage_size_in_tbs" = 1, "ad_scheduled_for_update" = "mock-value", "additional_attributes" = {}, "allocated_storage_size_in_tbs" = 1, "apex_details" = [{ "apex_version" = "mock-value", "ords_version" = "mock-value" }], "available_upgrade_versions" = ["mock-value"], "backup_config" = [{ "manual_backup_bucket_name" = "mock-value", "manual_backup_type" = "mock-value" }], "cluster_placement_group_id" = "MOCK_OCID_MOCK", "connection_strings" = [{ "all_connection_strings" = {}, "dedicated" = "mock-value", "high" = "mock-value", "low" = "mock-value", "medium" = "mock-value", "profiles" = [{ "consumer_group" = "mock-value", "display_name" = "compatibility", "host_format" = "mock-value", "is_regional" = false, "protocol" = "mock-value", "session_mode" = "mock-value", "syntax_format" = "mock-value", "tls_authentication" = "mock-value", "value" = "mock-value" }] }], "connection_urls" = [{ "apex_url" = "mock-value", "database_transforms_url" = "mock-value", "essbase_url" = "mock-value", "graph_studio_url" = "mock-value", "machine_learning_notebook_url" = "mock-value", "machine_learning_user_management_url" = "mock-value", "mongo_db_url" = "mock-value", "ords_url" = "mock-value", "spatial_studio_url" = "mock-value", "sql_dev_web_url" = "mock-value" }], "dataguard_region_type" = "mock-value", "disaster_recovery_region_type" = "mock-value", "encryption_key_history_entry" = [{ "encryption_key" = [{ "arn_role" = "mock-value", "autonomous_database_provider" = "mock-value", "certificate_directory_name" = "mock-value", "certificate_id" = "MOCK_OCID_MOCK", "directory_name" = "mock-value", "external_id" = "MOCK_OCID_MOCK", "key_arn" = "mock-value", "key_name" = "mock-value", "key_ring" = "mock-value", "kms_key_id" = "MOCK_OCID_MOCK", "kms_rest_endpoint" = "mock-value", "location" = "mock-value", "okv_kms_key" = "mock-value", "okv_uri" = "mock-value", "project" = "mock-value", "service_endpoint_uri" = "mock-value", "vault_id" = "MOCK_OCID_MOCK", "vault_uri" = "mock-value" }], "time_activated" = "mock-value" }], "encryption_key_location_details" = [{ "aws_encryption_key_id" = "MOCK_OCID_MOCK", "azure_encryption_key_id" = "MOCK_OCID_MOCK", "hsm_password" = "mock-value", "provider_type" = "mock-value" }], "external_location_zone" = "mock-value", "failed_data_recovery_in_seconds" = 1, "id" = "MOCK_OCID_DATABASE", "in_memory_area_in_gbs" = 1, "infrastructure_type" = "mock-value", "is_preview" = false, "is_reconnect_clone_enabled" = false, "is_remote_data_guard_enabled" = false, "key_history_entry" = [{ "id" = "MOCK_OCID_MOCK", "kms_key_version_id" = "MOCK_OCID_MOCK", "time_activated" = "mock-value", "vault_id" = "MOCK_OCID_MOCK" }], "key_store_id" = "MOCK_OCID_MOCK", "key_store_wallet_name" = "mock-value", "kms_key_lifecycle_details" = "mock-value", "kms_key_version_id" = "MOCK_OCID_MOCK", "lifecycle_details" = "mock-value", "local_disaster_recovery_type" = "mock-value", "local_standby_db" = [{ "availability_domain" = "MOCK:EU-FRANKFURT-1-AD-1", "external_location_zone" = "mock-value", "lag_time_in_seconds" = 1, "lifecycle_details" = "mock-value", "maintenance_target_component" = "mock-value", "state" = "AVAILABLE", "time_data_guard_role_changed" = "mock-value", "time_disaster_recovery_role_changed" = "mock-value", "time_maintenance_begin" = "mock-value", "time_maintenance_end" = "mock-value" }], "maintenance_target_component" = "mock-value", "memory_per_compute_unit_in_gbs" = 1, "memory_per_oracle_compute_unit_in_gbs" = 1, "net_services_architecture" = "mock-value", "next_long_term_backup_time_stamp" = "mock-value", "peer_db_ids" = ["mock-value"], "private_endpoint" = "mock-value", "provisionable_cpus" = [1], "public_connection_urls" = [{ "apex_url" = "mock-value", "database_transforms_url" = "mock-value", "essbase_url" = "mock-value", "graph_studio_url" = "mock-value", "machine_learning_notebook_url" = "mock-value", "machine_learning_user_management_url" = "mock-value", "mongo_db_url" = "mock-value", "ords_url" = "mock-value", "spatial_studio_url" = "mock-value", "sql_dev_web_url" = "mock-value" }], "public_endpoint" = "mock-value", "refreshable_status" = "mock-value", "remote_disaster_recovery_configuration" = [{ "disaster_recovery_type" = "mock-value", "is_replicate_automatic_backups" = false, "is_snapshot_standby" = false, "time_snapshot_standby_enabled_till" = "mock-value" }], "role" = "mock-value", "service_console_url" = "mock-value", "standby_db" = [{ "availability_domain" = "MOCK:EU-FRANKFURT-1-AD-1", "external_location_zone" = "mock-value", "lag_time_in_seconds" = 1, "lifecycle_details" = "mock-value", "maintenance_target_component" = "mock-value", "state" = "AVAILABLE", "time_data_guard_role_changed" = "mock-value", "time_disaster_recovery_role_changed" = "mock-value", "time_maintenance_begin" = "mock-value", "time_maintenance_end" = "mock-value" }], "supported_regions_to_clone_to" = ["mock-value"], "system_tags" = {}, "time_created" = "mock-value", "time_data_guard_role_changed" = "mock-value", "time_deletion_of_free_autonomous_database" = "mock-value", "time_disaster_recovery_role_changed" = "mock-value", "time_earliest_available_ad_update" = "mock-value", "time_earliest_available_db_version_upgrade" = "mock-value", "time_latest_available_ad_update" = "mock-value", "time_latest_available_db_version_upgrade" = "mock-value", "time_local_data_guard_enabled" = "mock-value", "time_maintenance_begin" = "mock-value", "time_maintenance_end" = "mock-value", "time_of_joining_resource_pool" = "mock-value", "time_of_last_failover" = "mock-value", "time_of_last_refresh" = "mock-value", "time_of_last_refresh_point" = "mock-value", "time_of_last_switchover" = "mock-value", "time_of_next_refresh" = "mock-value", "time_reclamation_of_free_autonomous_database" = "mock-value", "time_undeleted" = "mock-value", "time_until_reconnect_clone_enabled" = "mock-value", "total_backup_storage_size_in_gbs" = 1, "used_data_storage_size_in_gbs" = 1, "used_data_storage_size_in_tbs" = 1, "vanity_connection_urls" = [{ "apex_url" = "mock-value", "database_transforms_url" = "mock-value", "essbase_url" = "mock-value", "graph_studio_url" = "mock-value", "machine_learning_notebook_url" = "mock-value", "machine_learning_user_management_url" = "mock-value", "mongo_db_url" = "mock-value", "ords_url" = "mock-value", "sql_dev_web_url" = "mock-value" }] }
+  }
+  mock_resource "oci_database_autonomous_database_backup" {
+    defaults = { "compartment_id" = "MOCK_OCID_COMPARTMENT", "database_size_in_tbs" = 1, "db_version" = "mock-value", "id" = "MOCK_OCID_BACKUP", "infrastructure_type" = "mock-value", "is_automatic" = false, "is_restorable" = false, "key_store_id" = "MOCK_OCID_MOCK", "key_store_wallet_name" = "mock-value", "kms_key_id" = "MOCK_OCID_MOCK", "kms_key_version_id" = "MOCK_OCID_MOCK", "lifecycle_details" = "mock-value", "region" = "eu-frankfurt-1", "size_in_tbs" = 1, "source_database_details" = [{ "autonomous_container_database_customer_contacts" = [{ "email" = "mock-value" }], "autonomous_container_database_display_name" = "mock-value", "autonomous_container_database_dst_file_version" = "mock-value", "autonomous_container_database_name" = "mock-value", "autonomous_database_customer_contacts" = [{ "email" = "mock-value" }], "autonomous_database_name" = "mock-value", "autonomous_vm_cluster_display_name" = "mock-value", "db_workload" = "mock-value" }], "state" = "AVAILABLE", "time_available_till" = "mock-value", "time_ended" = "mock-value", "time_started" = "mock-value", "type" = "mock-value", "vault_id" = "MOCK_OCID_MOCK" }
+  }
+  mock_resource "oci_database_autonomous_database_wallet" {
+    defaults = { "content" = "bW9jaw==", "id" = "MOCK_OCID_WALLET" }
+  }
+  mock_resource "oci_identity_dynamic_group" {
+    defaults = { "id" = "MOCK_OCID_GROUP", "inactive_state" = "mock-value", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_identity_policy" {
+    defaults = { "ETag" = "mock-value", "id" = "MOCK_OCID_POLICY", "inactive_state" = "mock-value", "lastUpdateETag" = "mock-value", "policyHash" = "mock-value", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+}
+mock_provider "random" {
+}
+mock_provider "oci" {
+  alias = "homeregion"
+  mock_data "oci_core_services" {
+    defaults = { "id" = "MOCK_OCID_SERVICES", "services" = [{ "cidr_block" = "all-fra-services-in-oracle-services-network", "description" = "mock-value", "id" = "mock-service", "name" = "All FRA Services In Oracle Services Network" }] }
+  }
+  mock_data "oci_identity_region_subscriptions" {
+    defaults = { "id" = "MOCK_OCID_SUBSCRIPTIONS", "region_subscriptions" = [{ "is_home_region" = true, "region_key" = "FRA", "region_name" = "eu-frankfurt-1", "state" = "AVAILABLE", "tenancy_id" = "MOCK_OCID_MOCK", "status" = "READY" }] }
+  }
+  mock_data "oci_identity_regions" {
+    defaults = { "id" = "MOCK_OCID_REGIONS", "regions" = [{ "key" = "FRA", "name" = "eu-frankfurt-1" }, { "key" = "AMS", "name" = "eu-amsterdam-1" }] }
+  }
+  mock_resource "oci_core_dhcp_options" {
+    defaults = { "id" = "MOCK_OCID_OPTIONS", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_internet_gateway" {
+    defaults = { "id" = "MOCK_OCID_GATEWAY", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_nat_gateway" {
+    defaults = { "id" = "MOCK_OCID_GATEWAY", "nat_ip" = "mock-value", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_network_security_group" {
+    defaults = { "id" = "MOCK_OCID_GROUP", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_network_security_group_security_rule" {
+    defaults = { "id" = "MOCK_OCID_RULE", "is_valid" = false, "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_route_table" {
+    defaults = { "id" = "MOCK_OCID_TABLE", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_security_list" {
+    defaults = { "id" = "MOCK_OCID_LIST", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_service_gateway" {
+    defaults = { "block_traffic" = false, "id" = "MOCK_OCID_GATEWAY", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_core_subnet" {
+    defaults = { "id" = "MOCK_OCID_SUBNET", "ipv6virtual_router_ip" = "mock-value", "state" = "AVAILABLE", "subnet_domain_name" = "mock-value", "time_created" = "mock-value", "virtual_router_ip" = "mock-value", "virtual_router_mac" = "mock-value" }
+  }
+  mock_resource "oci_core_vcn" {
+    defaults = { "byoipv6cidr_blocks" = ["mock-value"], "default_dhcp_options_id" = "MOCK_OCID_MOCK", "default_route_table_id" = "MOCK_OCID_MOCK", "default_security_list_id" = "MOCK_OCID_MOCK", "id" = "MOCK_OCID_VCN", "ipv6cidr_blocks" = ["mock-value"], "state" = "AVAILABLE", "time_created" = "mock-value", "vcn_domain_name" = "mock-value" }
+  }
+  mock_resource "oci_database_autonomous_database" {
+    defaults = { "actual_used_data_storage_size_in_tbs" = 1, "ad_scheduled_for_update" = "mock-value", "additional_attributes" = {}, "allocated_storage_size_in_tbs" = 1, "apex_details" = [{ "apex_version" = "mock-value", "ords_version" = "mock-value" }], "available_upgrade_versions" = ["mock-value"], "backup_config" = [{ "manual_backup_bucket_name" = "mock-value", "manual_backup_type" = "mock-value" }], "cluster_placement_group_id" = "MOCK_OCID_MOCK", "connection_strings" = [{ "all_connection_strings" = {}, "dedicated" = "mock-value", "high" = "mock-value", "low" = "mock-value", "medium" = "mock-value", "profiles" = [{ "consumer_group" = "mock-value", "display_name" = "compatibility", "host_format" = "mock-value", "is_regional" = false, "protocol" = "mock-value", "session_mode" = "mock-value", "syntax_format" = "mock-value", "tls_authentication" = "mock-value", "value" = "mock-value" }] }], "connection_urls" = [{ "apex_url" = "mock-value", "database_transforms_url" = "mock-value", "essbase_url" = "mock-value", "graph_studio_url" = "mock-value", "machine_learning_notebook_url" = "mock-value", "machine_learning_user_management_url" = "mock-value", "mongo_db_url" = "mock-value", "ords_url" = "mock-value", "spatial_studio_url" = "mock-value", "sql_dev_web_url" = "mock-value" }], "dataguard_region_type" = "mock-value", "disaster_recovery_region_type" = "mock-value", "encryption_key_history_entry" = [{ "encryption_key" = [{ "arn_role" = "mock-value", "autonomous_database_provider" = "mock-value", "certificate_directory_name" = "mock-value", "certificate_id" = "MOCK_OCID_MOCK", "directory_name" = "mock-value", "external_id" = "MOCK_OCID_MOCK", "key_arn" = "mock-value", "key_name" = "mock-value", "key_ring" = "mock-value", "kms_key_id" = "MOCK_OCID_MOCK", "kms_rest_endpoint" = "mock-value", "location" = "mock-value", "okv_kms_key" = "mock-value", "okv_uri" = "mock-value", "project" = "mock-value", "service_endpoint_uri" = "mock-value", "vault_id" = "MOCK_OCID_MOCK", "vault_uri" = "mock-value" }], "time_activated" = "mock-value" }], "encryption_key_location_details" = [{ "aws_encryption_key_id" = "MOCK_OCID_MOCK", "azure_encryption_key_id" = "MOCK_OCID_MOCK", "hsm_password" = "mock-value", "provider_type" = "mock-value" }], "external_location_zone" = "mock-value", "failed_data_recovery_in_seconds" = 1, "id" = "MOCK_OCID_DATABASE", "in_memory_area_in_gbs" = 1, "infrastructure_type" = "mock-value", "is_preview" = false, "is_reconnect_clone_enabled" = false, "is_remote_data_guard_enabled" = false, "key_history_entry" = [{ "id" = "MOCK_OCID_MOCK", "kms_key_version_id" = "MOCK_OCID_MOCK", "time_activated" = "mock-value", "vault_id" = "MOCK_OCID_MOCK" }], "key_store_id" = "MOCK_OCID_MOCK", "key_store_wallet_name" = "mock-value", "kms_key_lifecycle_details" = "mock-value", "kms_key_version_id" = "MOCK_OCID_MOCK", "lifecycle_details" = "mock-value", "local_disaster_recovery_type" = "mock-value", "local_standby_db" = [{ "availability_domain" = "MOCK:EU-FRANKFURT-1-AD-1", "external_location_zone" = "mock-value", "lag_time_in_seconds" = 1, "lifecycle_details" = "mock-value", "maintenance_target_component" = "mock-value", "state" = "AVAILABLE", "time_data_guard_role_changed" = "mock-value", "time_disaster_recovery_role_changed" = "mock-value", "time_maintenance_begin" = "mock-value", "time_maintenance_end" = "mock-value" }], "maintenance_target_component" = "mock-value", "memory_per_compute_unit_in_gbs" = 1, "memory_per_oracle_compute_unit_in_gbs" = 1, "net_services_architecture" = "mock-value", "next_long_term_backup_time_stamp" = "mock-value", "peer_db_ids" = ["mock-value"], "private_endpoint" = "mock-value", "provisionable_cpus" = [1], "public_connection_urls" = [{ "apex_url" = "mock-value", "database_transforms_url" = "mock-value", "essbase_url" = "mock-value", "graph_studio_url" = "mock-value", "machine_learning_notebook_url" = "mock-value", "machine_learning_user_management_url" = "mock-value", "mongo_db_url" = "mock-value", "ords_url" = "mock-value", "spatial_studio_url" = "mock-value", "sql_dev_web_url" = "mock-value" }], "public_endpoint" = "mock-value", "refreshable_status" = "mock-value", "remote_disaster_recovery_configuration" = [{ "disaster_recovery_type" = "mock-value", "is_replicate_automatic_backups" = false, "is_snapshot_standby" = false, "time_snapshot_standby_enabled_till" = "mock-value" }], "role" = "mock-value", "service_console_url" = "mock-value", "standby_db" = [{ "availability_domain" = "MOCK:EU-FRANKFURT-1-AD-1", "external_location_zone" = "mock-value", "lag_time_in_seconds" = 1, "lifecycle_details" = "mock-value", "maintenance_target_component" = "mock-value", "state" = "AVAILABLE", "time_data_guard_role_changed" = "mock-value", "time_disaster_recovery_role_changed" = "mock-value", "time_maintenance_begin" = "mock-value", "time_maintenance_end" = "mock-value" }], "supported_regions_to_clone_to" = ["mock-value"], "system_tags" = {}, "time_created" = "mock-value", "time_data_guard_role_changed" = "mock-value", "time_deletion_of_free_autonomous_database" = "mock-value", "time_disaster_recovery_role_changed" = "mock-value", "time_earliest_available_ad_update" = "mock-value", "time_earliest_available_db_version_upgrade" = "mock-value", "time_latest_available_ad_update" = "mock-value", "time_latest_available_db_version_upgrade" = "mock-value", "time_local_data_guard_enabled" = "mock-value", "time_maintenance_begin" = "mock-value", "time_maintenance_end" = "mock-value", "time_of_joining_resource_pool" = "mock-value", "time_of_last_failover" = "mock-value", "time_of_last_refresh" = "mock-value", "time_of_last_refresh_point" = "mock-value", "time_of_last_switchover" = "mock-value", "time_of_next_refresh" = "mock-value", "time_reclamation_of_free_autonomous_database" = "mock-value", "time_undeleted" = "mock-value", "time_until_reconnect_clone_enabled" = "mock-value", "total_backup_storage_size_in_gbs" = 1, "used_data_storage_size_in_gbs" = 1, "used_data_storage_size_in_tbs" = 1, "vanity_connection_urls" = [{ "apex_url" = "mock-value", "database_transforms_url" = "mock-value", "essbase_url" = "mock-value", "graph_studio_url" = "mock-value", "machine_learning_notebook_url" = "mock-value", "machine_learning_user_management_url" = "mock-value", "mongo_db_url" = "mock-value", "ords_url" = "mock-value", "sql_dev_web_url" = "mock-value" }] }
+  }
+  mock_resource "oci_database_autonomous_database_backup" {
+    defaults = { "compartment_id" = "MOCK_OCID_COMPARTMENT", "database_size_in_tbs" = 1, "db_version" = "mock-value", "id" = "MOCK_OCID_BACKUP", "infrastructure_type" = "mock-value", "is_automatic" = false, "is_restorable" = false, "key_store_id" = "MOCK_OCID_MOCK", "key_store_wallet_name" = "mock-value", "kms_key_id" = "MOCK_OCID_MOCK", "kms_key_version_id" = "MOCK_OCID_MOCK", "lifecycle_details" = "mock-value", "region" = "eu-frankfurt-1", "size_in_tbs" = 1, "source_database_details" = [{ "autonomous_container_database_customer_contacts" = [{ "email" = "mock-value" }], "autonomous_container_database_display_name" = "mock-value", "autonomous_container_database_dst_file_version" = "mock-value", "autonomous_container_database_name" = "mock-value", "autonomous_database_customer_contacts" = [{ "email" = "mock-value" }], "autonomous_database_name" = "mock-value", "autonomous_vm_cluster_display_name" = "mock-value", "db_workload" = "mock-value" }], "state" = "AVAILABLE", "time_available_till" = "mock-value", "time_ended" = "mock-value", "time_started" = "mock-value", "type" = "mock-value", "vault_id" = "MOCK_OCID_MOCK" }
+  }
+  mock_resource "oci_database_autonomous_database_wallet" {
+    defaults = { "content" = "bW9jaw==", "id" = "MOCK_OCID_WALLET" }
+  }
+  mock_resource "oci_identity_dynamic_group" {
+    defaults = { "id" = "MOCK_OCID_GROUP", "inactive_state" = "mock-value", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+  mock_resource "oci_identity_policy" {
+    defaults = { "ETag" = "mock-value", "id" = "MOCK_OCID_POLICY", "inactive_state" = "mock-value", "lastUpdateETag" = "mock-value", "policyHash" = "mock-value", "state" = "AVAILABLE", "time_created" = "mock-value" }
+  }
+}
+variables {
+  tenancy_ocid     = "MOCK_OCID_TENANCY"
+  user_ocid        = "MOCK_OCID_MOCK"
+  private_key_path = "/unused-by-mock"
+  compartment_ocid = "MOCK_OCID_COMPARTMENT"
+  region           = "eu-frankfurt-1"
+  fingerprint      = "compatibility"
+  adb_password     = "MockOnlyPassword123!"
+  vault_id         = "MOCK_OCID_MOCK"
+  kms_key_id       = "MOCK_OCID_MOCK"
+}
+
+run "oci9_plan" {
+  command   = plan
+  providers = { oci = oci, random = random, oci.homeregion = oci.homeregion }
+}

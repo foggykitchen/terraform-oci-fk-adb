@@ -1,5 +1,5 @@
 module "fk_vcn" {
-  source = "git::https://github.com/foggykitchen/terraform-oci-fk-vcn.git?ref=v0.1.0"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-vcn.git?ref=v0.3.0" # TODO: tag not yet released
 
   compartment_ocid = var.compartment_ocid
   name             = "FoggyKitchenADBVCN"
@@ -41,7 +41,7 @@ module "fk_vcn" {
 }
 
 module "fk_nsg" {
-  source = "github.com/foggykitchen/terraform-oci-fk-nsg"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-nsg.git?ref=v0.2.0" # TODO: tag not yet released
 
   name             = "FoggyKitchenADBNSG"
   compartment_ocid = var.compartment_ocid

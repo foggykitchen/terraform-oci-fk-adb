@@ -19,7 +19,7 @@ resource "oci_database_autonomous_database" "fk_adb_database" {
   license_model                       = var.adb_database_license_model
   is_free_tier                        = var.adb_free_tier
   is_auto_scaling_enabled             = var.is_auto_scaling_enabled
-  is_auto_scaling_for_storage_enabled = var.is_auto_scaling_for_storage_enabled 
+  is_auto_scaling_for_storage_enabled = var.is_auto_scaling_for_storage_enabled
   is_local_data_guard_enabled         = var.is_local_data_guard_enabled
   whitelisted_ips                     = var.adb_private_endpoint ? null : var.whitelisted_ips
   nsg_ids                             = var.adb_private_endpoint ? [local.adb_nsg_id] : null
@@ -29,11 +29,11 @@ resource "oci_database_autonomous_database" "fk_adb_database" {
   source                              = var.source_type
   source_id                           = var.source_id
   clone_type                          = var.clone_type
-  refreshable_mode                    = var.refreshable_mode          
+  refreshable_mode                    = var.refreshable_mode
   remote_disaster_recovery_type       = var.remote_disaster_recovery_type
   autonomous_database_backup_id       = var.autonomous_database_backup_id
   compute_model                       = var.adb_compute_model
-  compute_count                       = var.adb_compute_model == "ECPU" ? var.adb_compute_count : null       
+  compute_count                       = var.adb_compute_model == "ECPU" ? var.adb_compute_count : null
 
   # OCI Always Free ECPU databases may be created only with a higher requested
   # compute_count, but then report an effective count of 1 on refresh. Ignore
@@ -51,15 +51,16 @@ resource "random_password" "wallet_password" {
 }
 
 resource "oci_database_autonomous_database_wallet" "fk_adb_database_wallet" {
+  generate_type          = "SINGLE"
   autonomous_database_id = oci_database_autonomous_database.fk_adb_database.id
   password               = random_password.wallet_password.result
   base64_encode_content  = "true"
 }
 
 resource "oci_database_autonomous_database_backup" "fk_adb_database_backup" {
-    count                    = var.adb_backup_enabled ? 1 : 0
-    autonomous_database_id   = oci_database_autonomous_database.fk_adb_database.id
-    display_name             = var.adb_backup_display_name
-    is_long_term_backup      = var.adb_backup_is_long_term_backup
-    retention_period_in_days = var.adb_backup_retention_period_in_days
+  count                    = var.adb_backup_enabled ? 1 : 0
+  autonomous_database_id   = oci_database_autonomous_database.fk_adb_database.id
+  display_name             = var.adb_backup_display_name
+  is_long_term_backup      = var.adb_backup_is_long_term_backup
+  retention_period_in_days = var.adb_backup_retention_period_in_days
 }
